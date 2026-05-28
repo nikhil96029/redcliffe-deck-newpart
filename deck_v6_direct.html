@@ -1460,8 +1460,7 @@
 
     <!-- The face scan image — zoomed out, fully visible, no black bars -->
     <img src="assets/face_vital_scan.png"
-         style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-                width:78%;height:auto;max-height:85%;object-fit:contain;"
+         style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78%;height:auto;max-height:85%;object-fit:contain;"
          alt="Face Vital Scan" />
 
     <!-- Scan ring overlay SVG — concentric rings + active arc + corner brackets -->
@@ -1875,7 +1874,7 @@
     }
 
     function enhanceSlide2(root) {
-      const top = root.firstElementChild;
+      const top = root.lastElementChild;
       const panels = Array.from(top.children).filter((el) => el.tagName === 'DIV' && el.style.width);
       const left = panels[0];
       const right = panels[1];
@@ -2094,7 +2093,7 @@
         animStyle.textContent = baseAnimationCSS;
         shadow.appendChild(animStyle);
         shadow.appendChild(document.getElementById(slide.templateId).content.cloneNode(true));
-        enhanceSlide(index, shadow);
+        try { enhanceSlide(index, shadow); } catch(e) { console.warn('enhanceSlide error at index', index, e); }
 
         shell.appendChild(host);
         deckStage.insertBefore(shell, prevHit);
