@@ -265,175 +265,209 @@
   </template>
   <template id="slide-template-1">
 <style>
-
     * { box-sizing: border-box; }
     body { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-  
-</style>
-<style>
-
-    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
     .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
     .ff{font-family:'Fraunces',serif;}
     .cm{position:absolute;width:32px;height:32px;z-index:5;}
     .cm svg{width:32px;height:32px;}
-  
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .logo-halo{position:absolute;top:50%;left:50%;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:50%;background:radial-gradient(circle,rgba(233,22,78,0.45) 0%,rgba(233,22,78,0.18) 40%,rgba(233,22,78,0) 70%);opacity:0;pointer-events:none;z-index:0;}
+    :host(.animating) .logo-halo{animation:logoHalo1 1.8s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:var(--halo-delay,0s);}
+    @keyframes logoHalo1{0%{opacity:0;transform:scale(0.45);}35%{opacity:1;transform:scale(1.05);}100%{opacity:0;transform:scale(1.9);}}
+    .timeline-sparkle1{position:absolute;left:32px;top:21px;width:14px;height:14px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 10px #E9164E,0 0 22px rgba(233,22,78,0.7);opacity:0;pointer-events:none;z-index:4;}
+    :host(.animating) .timeline-sparkle1{animation:travelDown1 3.2s cubic-bezier(0.4,0.1,0.4,1) forwards;animation-delay:1.4s;}
+    @keyframes travelDown1{0%{top:21px;opacity:0;transform:scale(0.6);}8%{opacity:1;transform:scale(1);}92%{opacity:1;transform:scale(1);}100%{top:519px;opacity:0;transform:scale(0.6);}}
+    .timeline-line1{transform:scaleX(0);transform-origin:left center;}
+    :host(.animating) .timeline-line1{animation:drawRight1 1.4s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.40s;}
+    @keyframes drawRight1{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+    [data-year-dot="2026"]{position:absolute;}
+    [data-year-dot="2026"]::before{content:'';position:absolute;inset:-6px;border-radius:50%;box-shadow:0 0 0 0 rgba(233,22,78,0.6);opacity:0;}
+    :host(.animating) [data-year-dot="2026"]::before{animation:year2026Ring1 2.4s ease-out infinite;animation-delay:1.8s;}
+    @keyframes year2026Ring1{0%{opacity:0.85;box-shadow:0 0 0 0 rgba(233,22,78,0.65);}80%{opacity:0;box-shadow:0 0 0 22px rgba(233,22,78,0);}100%{opacity:0;box-shadow:0 0 0 22px rgba(233,22,78,0);}}
 </style>
 
 <div style="width:1920px;height:1080px;overflow:hidden;position:relative;font-family:'Poppins',sans-serif;background:#013B68;">
-  <div class="grain"></div>
+
+  <!-- White right panel -->
+  <div style="position:absolute;top:0;left:1130px;right:0;bottom:0;background:#FFFFFF;z-index:0;overflow:hidden;">
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="dp-w1" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="0" cy="0" r="1.5" fill="rgba(1,59,104,0.12)"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#dp-w1)"/>
+    </svg>
+    <div style="position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(to bottom,#E9164E 0%,#F59E0B 25%,#6366F1 55%,#0891B2 80%,#E9164E 100%);z-index:2;"></div>
+    <svg style="position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;opacity:0.12;pointer-events:none;" viewBox="0 0 260 260">
+      <circle cx="130" cy="130" r="120" fill="none" stroke="#013B68" stroke-width="1" stroke-dasharray="4,8"/>
+      <circle cx="130" cy="130" r="90" fill="none" stroke="#E9164E" stroke-width="1.5"/>
+      <circle cx="130" cy="130" r="60" fill="none" stroke="#6366F1" stroke-width="1" stroke-dasharray="2,4"/>
+      <circle cx="130" cy="130" r="30" fill="none" stroke="#F59E0B" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="grain" style="right:800px;"></div>
   <div class="cm" style="top:28px;left:28px;"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <div class="cm" style="top:28px;right:28px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <div class="cm" style="bottom:28px;right:28px;transform:rotate(180deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="top:28px;right:28px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(1,59,104,0.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="bottom:28px;right:28px;transform:rotate(180deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(1,59,104,0.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <div class="cm" style="bottom:28px;left:28px;transform:rotate(270deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 
-  <!-- ── Logo — top right (absolute) ── -->
-  <img src="nelogo.png"
-    style="position:absolute;top:80px;right:240px;width:240px;height:60px;object-fit:contain;z-index:3;"
-    alt="Redcliffe Labs" />
-
-  <!-- ── Lab image — vertically centred in right zone ── -->
-  <img src="assets/lab_machines.png"
-    style="position:absolute;top:220px;right:60px;width:600px;height:530px;object-fit:cover;object-position:center center;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.45);z-index:3;"
-    alt="Redcliffe Labs" />
-
-  <!-- ── Abhay: small headshot + name block — bottom right, separate from lab image ── -->
-  <div style="position:absolute;bottom:106px;right:110px;width:500px;z-index:3;display:flex;flex-direction:row;align-items:center;gap:26px;">
-    <!-- Small circular headshot -->
-    <div style="width:118px;height:118px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(233,22,78,0.6);">
-      <img src="assets/abhay_headshot.png"
-        style="width:100%;height:100%;object-fit:cover;object-position:top center;"
-        alt="Abhay Singavi" />
+  <!-- Headline -->
+  <div style="position:absolute;top:70px;left:80px;width:1050px;z-index:3;">
+    <div style="margin-bottom:10px;"><span class="pill">19 Years &middot; One Thesis</span></div>
+    <div class="ff" style="font-size:62px;font-weight:800;line-height:1.0;letter-spacing:-2px;white-space:nowrap;">
+      <span style="color:#FFFFFF;">The Insight That </span><span style="color:#E9164E;">Started Everything</span>
     </div>
-    <!-- Name text -->
-    <div style="border-left:2px solid rgba(233,22,78,0.5);padding-left:22px;">
-      <div style="color:#FFFFFF;font-size:27px;font-weight:800;line-height:1.2;">Abhay Singavi</div>
-      <div style="color:rgba(255,255,255,0.6);font-size:18px;font-weight:400;margin-top:7px;">Chief Business Officer · Redcliffe Labs</div>
-      <div style="color:rgba(255,255,255,0.4);font-size:16px;font-weight:400;margin-top:4px;">19 Years in Healthcare Strategy</div>
+    <div style="width:72px;height:4px;background:#E9164E;margin-top:18px;"></div>
+  </div>
+
+  <!-- Logo top right -->
+  <img src="nelogo.png" style="position:absolute;top:72px;right:150px;height:76px;object-fit:contain;z-index:4;" alt="Redcliffe Labs" />
+
+  <!-- Career timeline with logos -->
+  <div style="position:absolute;top:270px;left:80px;width:1020px;z-index:2;">
+    <div class="timeline-line1" style="position:absolute;top:104px;left:14px;right:14px;height:1px;background:rgba(255,255,255,0.22);z-index:0;"></div>
+    <div style="display:flex;flex-direction:row;align-items:flex-start;gap:18px;position:relative;">
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
+          <div class="logo-halo" style="--halo-delay:0.46s;"></div>
+          <img src="https://docemm19.github.io/redcliffe-govt-deck/assets/logos/narayana_health.png" style="max-height:44px;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.92;" alt="Narayana Health" />
+        </div>
+        <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">01</span></div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Narayana Health</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Made healthcare affordable to the bottom of the pyramid</div></div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
+          <div class="logo-halo" style="--halo-delay:0.55s;"></div>
+          <img src="https://docemm19.github.io/redcliffe-govt-deck/assets/logos/medanta.png" style="max-height:44px;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.92;" alt="Medanta" />
+        </div>
+        <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">02</span></div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Medanta</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Built upmarket, high-accuracy care at scale</div></div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
+          <div class="logo-halo" style="--halo-delay:0.64s;"></div>
+          <img src="https://docemm19.github.io/redcliffe-govt-deck/assets/logos/policybazaar.png" style="max-height:44px;max-width:160px;object-fit:contain;opacity:0.92;" alt="PolicyBazaar" />
+        </div>
+        <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">03</span></div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">PolicyBazaar</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Sold insurance to diagnostics buyers &mdash; saw the demand signal first</div></div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
+          <div class="logo-halo" style="--halo-delay:0.73s;"></div>
+          <img src="https://docemm19.github.io/redcliffe-govt-deck/assets/logos/healthians.png" style="max-height:44px;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.92;" alt="Healthians" />
+        </div>
+        <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">04</span></div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Healthians</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Proved home collection works &mdash; built the model first</div></div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
+          <div class="logo-halo" style="--halo-delay:0.82s;"></div>
+          <img src="nelogo.png" style="max-height:44px;max-width:160px;object-fit:contain;opacity:0.95;" alt="Redcliffe Labs" />
+        </div>
+        <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">05</span></div>
+        <div style="color:#E9164E;font-size:15px;font-weight:800;margin-top:8px;">Redcliffe Labs</div>
+      </div>
     </div>
   </div>
 
-  <!-- ── Main content — flows left ── -->
-  <div style="position:relative;z-index:1;height:1080px;padding:64px 56px 48px 80px;display:flex;flex-direction:column;">
+  <!-- Bridge line -->
+  <div style="position:absolute;top:373px;left:1096px;width:70px;height:0;border-top:2.5px dashed rgba(233,22,78,0.75);z-index:2;"></div>
 
-    <!-- Pill + Headline -->
-    <div style="margin-bottom:16px;"><span class="pill">Thought Leadership</span></div>
-    <div class="ff" style="color:#FFFFFF;font-size:68px;font-weight:800;line-height:0.98;letter-spacing:-2px;margin-bottom:6px;">The Insight That</div>
-    <div class="ff" style="color:#E9164E;font-size:68px;font-weight:800;line-height:0.98;letter-spacing:-2px;">Started Everything</div>
+  <!-- FUNNEL CHART replaces hero image -->
+  <div style="position:absolute;top:490px;left:80px;width:1020px;height:430px;z-index:2;display:flex;flex-direction:row;align-items:center;gap:48px;">
+    <svg width="480" height="340" viewBox="0 0 480 340" style="flex-shrink:0;">
+      <defs>
+        <linearGradient id="f1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#f0315c"/><stop offset="100%" stop-color="#be0c3a"/></linearGradient>
+        <linearGradient id="f2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#154e7e"/><stop offset="100%" stop-color="#0a2e50"/></linearGradient>
+        <linearGradient id="f3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0d3558"/><stop offset="100%" stop-color="#011e38"/></linearGradient>
+        <linearGradient id="f4" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#092840"/><stop offset="100%" stop-color="#010e1c"/></linearGradient>
+      </defs>
+      <polygon points="0,0 480,0 420,85 60,85" fill="url(#f1)"/>
+      <text x="240" y="34" text-anchor="middle" fill="white" font-size="15" font-family="Poppins" font-weight="800">DIAGNOSTICS</text>
+      <text x="240" y="54" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12" font-family="Poppins">60–65% Gross Margin</text>
+      <polygon points="60,91 420,91 360,176 120,176" fill="url(#f2)"/>
+      <text x="240" y="124" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="15" font-family="Poppins" font-weight="600">OPD</text>
+      <text x="240" y="145" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="12" font-family="Poppins">30–35% GM</text>
+      <polygon points="120,182 360,182 300,267 180,267" fill="url(#f3)"/>
+      <text x="240" y="215" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="15" font-family="Poppins" font-weight="600">Hospitals</text>
+      <text x="240" y="237" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-family="Poppins">22% GM</text>
+      <polygon points="180,273 300,273 240,340" fill="url(#f4)"/>
+      <text x="240" y="303" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="12" font-family="Poppins" font-weight="600">Home Care · 20% GM</text>
+    </svg>
 
-    <!-- Crimson rule -->
-    <div style="width:72px;height:4px;background:#E9164E;margin:20px 0 28px;"></div>
-
-    <!-- Career timeline — 5 steps -->
-    <div style="display:flex;flex-direction:row;align-items:flex-start;position:relative;margin-bottom:32px;max-width:1100px;">
-      <div style="position:absolute;top:14px;left:14px;right:14px;height:1px;background:rgba(255,255,255,0.18);z-index:0;"></div>
-
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
-        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
-          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">01</span>
-        </div>
-        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Narayana</div>
-        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Made healthcare affordable to the bottom of the pyramid</div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div style="border-left:3px solid #E9164E;padding-left:18px;">
+        <div style="color:#E9164E;font-size:48px;font-weight:800;line-height:1;letter-spacing:-2px;">60–65%</div>
+        <div style="color:rgba(255,255,255,0.75);font-size:14px;margin-top:4px;">Gross Margin · Diagnostics Segment</div>
       </div>
-
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
-        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
-          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">02</span>
-        </div>
-        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Medanta</div>
-        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Built upmarket, high-accuracy care at scale</div>
+      <div style="border-left:3px solid rgba(255,255,255,0.15);padding-left:18px;">
+        <div style="color:rgba(255,255,255,0.5);font-size:34px;font-weight:700;line-height:1;letter-spacing:-1px;">22%</div>
+        <div style="color:rgba(255,255,255,0.35);font-size:14px;margin-top:4px;">Gross Margin · Hospitals</div>
       </div>
-
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
-        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
-          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">03</span>
-        </div>
-        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">PolicyBazaar</div>
-        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Found the margin map — Diagnostics at 60–65% GM</div>
-      </div>
-
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
-        <div style="width:30px;height:30px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(233,22,78,0.55);margin-top:-2px;">
-          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">04</span>
-        </div>
-        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Healthians</div>
-        <div style="color:rgba(255,255,255,0.55);font-size:12px;font-weight:500;margin-top:2px;">Proved home collection works — built the model first</div>
-      </div>
-
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
-        <div style="width:36px;height:36px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(233,22,78,0.65);margin-top:-4px;">
-          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">05</span>
-        </div>
-        <div style="color:#E9164E;font-size:15px;font-weight:800;margin-top:8px;line-height:1.2;">Redcliffe Labs</div>
-        <div style="color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;margin-top:2px;">CBO · Current</div>
-        <div style="color:rgba(255,255,255,0.35);font-size:11px;font-weight:400;margin-top:1px;">Tech-first. Born.</div>
+      <div style="background:rgba(233,22,78,0.08);border:1px solid rgba(233,22,78,0.3);border-radius:10px;padding:16px 18px;max-width:380px;">
+        <div style="font-size:10px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">The Gap Nobody Filled</div>
+        <div style="color:rgba(255,255,255,0.82);font-size:13px;line-height:1.6;">From <span style="color:#FFFFFF;font-weight:600;">Dabur to SpiceJet</span>, COVID triggered a rush into healthcare — everyone hitting wafer-thin margins. The biggest labs were white elephants. No tech. No vision.</div>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(233,22,78,0.2);color:#E9164E;font-size:13px;font-weight:700;">That gap became Redcliffe.</div>
       </div>
     </div>
-
-    <!-- Pyramid + callouts -->
-    <div style="flex:1;display:flex;flex-direction:row;align-items:center;gap:44px;">
-
-      <svg width="500" height="300" viewBox="0 0 540 320" style="flex-shrink:0;">
-        <defs>
-          <linearGradient id="t4" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#092840"/><stop offset="100%" stop-color="#010e1c"/>
-          </linearGradient>
-          <linearGradient id="t3" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#0d3558"/><stop offset="100%" stop-color="#011e38"/>
-          </linearGradient>
-          <linearGradient id="t2" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#154e7e"/><stop offset="100%" stop-color="#0a2e50"/>
-          </linearGradient>
-          <linearGradient id="t1" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#f0315c"/><stop offset="100%" stop-color="#be0c3a"/>
-          </linearGradient>
-        </defs>
-        <polygon points="20,20 520,20 460,87 80,87" fill="url(#t1)"/>
-        <text x="270" y="48" text-anchor="middle" fill="white" font-size="16" font-family="Poppins" font-weight="800">DIAGNOSTICS</text>
-        <text x="270" y="68" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="13" font-family="Poppins">60–65% Gross Margin</text>
-        <polygon points="80,93 460,93 400,160 140,160" fill="url(#t2)"/>
-        <text x="270" y="121" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-family="Poppins" font-weight="600">OPD</text>
-        <text x="270" y="141" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="13" font-family="Poppins">30–35% GM</text>
-        <polygon points="140,166 400,166 340,233 200,233" fill="url(#t3)"/>
-        <text x="270" y="194" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="16" font-family="Poppins" font-weight="600">Hospitals</text>
-        <text x="270" y="214" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="13" font-family="Poppins">22% GM</text>
-        <polygon points="200,239 340,239 270,306" fill="url(#t4)"/>
-        <text x="270" y="268" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="13" font-family="Poppins" font-weight="600">Home Care</text>
-        <text x="270" y="284" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="13" font-family="Poppins">20% GM</text>
-        <line x1="8" y1="20" x2="8" y2="306" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-        <line x1="4" y1="20" x2="12" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <line x1="4" y1="306" x2="12" y2="306" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-      </svg>
-
-      <!-- Annotation callouts -->
-      <div style="display:flex;flex-direction:column;gap:18px;">
-
-        <div style="border-left:3px solid #E9164E;padding-left:18px;">
-          <div style="color:#E9164E;font-size:44px;font-weight:800;line-height:1;letter-spacing:-2px;">60–65%</div>
-          <div style="color:rgba(255,255,255,0.75);font-size:15px;font-weight:400;margin-top:4px;">Gross Margin · Diagnostics Segment</div>
-        </div>
-
-        <div style="border-left:3px solid rgba(255,255,255,0.15);padding-left:18px;">
-          <div style="color:rgba(255,255,255,0.5);font-size:32px;font-weight:700;line-height:1;letter-spacing:-1px;">22%</div>
-          <div style="color:rgba(255,255,255,0.35);font-size:15px;font-weight:400;margin-top:4px;">Gross Margin · Hospitals</div>
-        </div>
-
-        <div style="background:rgba(233,22,78,0.08);border:1px solid rgba(233,22,78,0.3);border-radius:10px;padding:18px 20px;max-width:420px;">
-          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">The Gap Nobody Filled</div>
-          <div style="color:rgba(255,255,255,0.85);font-size:14px;font-weight:400;line-height:1.6;">From <span style="color:#FFFFFF;font-weight:600;">Dabur to SpiceJet</span>, COVID triggered a rush into healthcare — everyone chasing medicine delivery, everyone hitting wafer-thin margins. When they turned to diagnostics, the biggest labs were white elephants. No tech. No vision.</div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(233,22,78,0.2);color:#E9164E;font-size:14px;font-weight:700;">That gap became Redcliffe.</div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
-      <div style="color:rgba(255,255,255,0.55);font-size:13px;font-style:italic;line-height:1.4;max-width:700px;">19 years. One clear thesis: diagnostics is the highest-margin, highest-impact category in Indian healthcare.</div>
-      <div style="color:rgba(255,255,255,0.2);font-size:12px;letter-spacing:1.5px;flex-shrink:0;">CHRO Confex · Bengaluru · April 2026 &nbsp;·&nbsp; 01 / 07</div>
-    </div>
-
   </div>
+
+  <!-- Vertical timeline axis 2021-2026 (right panel) -->
+  <div style="position:absolute;top:353px;left:1170px;width:80px;height:660px;z-index:2;">
+    <div style="position:absolute;top:0;bottom:0;left:38px;width:2px;background:linear-gradient(to bottom,#E9164E 0%,rgba(233,22,78,0.55) 50%,rgba(233,22,78,0.3) 100%);"></div>
+    <div class="timeline-sparkle1"></div>
+    <div data-year-dot="2021" style="position:absolute;top:0;left:18px;width:42px;height:42px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(233,22,78,0.55);"><span style="color:#FFFFFF;font-size:12px;font-weight:800;">2021</span></div>
+    <div data-year-dot="2022" style="position:absolute;top:130px;left:20px;width:38px;height:38px;border-radius:50%;background:#FFFFFF;border:2.5px solid #0D9488;display:flex;align-items:center;justify-content:center;"><span style="color:#0D9488;font-size:11px;font-weight:800;">2022</span></div>
+    <div data-year-dot="2023" style="position:absolute;top:250px;left:20px;width:38px;height:38px;border-radius:50%;background:#FFFFFF;border:2.5px solid #D97706;display:flex;align-items:center;justify-content:center;"><span style="color:#D97706;font-size:11px;font-weight:800;">2023</span></div>
+    <div data-year-dot="2024" style="position:absolute;top:370px;left:20px;width:38px;height:38px;border-radius:50%;background:#FFFFFF;border:2.5px solid #013B68;display:flex;align-items:center;justify-content:center;"><span style="color:#013B68;font-size:11px;font-weight:800;">2024</span></div>
+    <div data-year-dot="2025" style="position:absolute;top:490px;left:20px;width:38px;height:38px;border-radius:50%;background:#FFFFFF;border:2.5px solid #475569;display:flex;align-items:center;justify-content:center;"><span style="color:#475569;font-size:11px;font-weight:800;">2025</span></div>
+    <div data-year-dot="2026" style="position:absolute;top:610px;left:18px;width:42px;height:42px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(233,22,78,0.55);"><span style="color:#FFFFFF;font-size:12px;font-weight:800;">2026</span></div>
+  </div>
+
+  <!-- Year descriptions -->
+  <div style="position:absolute;top:473px;left:1270px;width:300px;z-index:2;">
+    <div style="background:#FFFFFF;border-left:3px solid #0D9488;border-radius:0 10px 10px 0;padding:10px 14px;box-shadow:0 4px 14px rgba(13,148,136,0.12);">
+      <div style="font-size:10px;font-weight:700;color:#0D9488;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Spreading Wings</div>
+      <div style="color:#013B68;font-size:13px;line-height:1.4;">26+ labs &amp; 500+ centres outside metros.</div>
+    </div>
+  </div>
+  <div style="position:absolute;top:593px;left:1270px;width:300px;z-index:2;">
+    <div style="background:#FFFFFF;border-left:3px solid #D97706;border-radius:0 10px 10px 0;padding:10px 14px;box-shadow:0 4px 14px rgba(217,119,6,0.12);">
+      <div style="font-size:10px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Making a Mark</div>
+      <div style="color:#013B68;font-size:13px;line-height:1.4;">UN General Assembly — $400M savings for Indian families.</div>
+    </div>
+  </div>
+  <div style="position:absolute;top:713px;left:1270px;width:300px;z-index:2;">
+    <div style="background:#FFFFFF;border-left:3px solid #013B68;border-radius:0 10px 10px 0;padding:10px 14px;box-shadow:0 4px 14px rgba(1,59,104,0.14);">
+      <div style="font-size:10px;font-weight:700;color:#013B68;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Accelerating Impact</div>
+      <div style="color:#013B68;font-size:13px;line-height:1.4;">7M lives touched — South India on board.</div>
+    </div>
+  </div>
+  <div style="position:absolute;top:833px;left:1270px;width:300px;z-index:2;">
+    <div style="background:#FFFFFF;border-left:3px solid #475569;border-radius:0 10px 10px 0;padding:10px 14px;box-shadow:0 4px 14px rgba(71,85,105,0.12);">
+      <div style="font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Thriving at Scale</div>
+      <div style="color:#013B68;font-size:13px;line-height:1.4;">80+ labs · 1,200+ phlebotomists · 80+ NPS.</div>
+    </div>
+  </div>
+  <div style="position:absolute;top:953px;left:1270px;width:300px;z-index:2;">
+    <div style="background:rgba(233,22,78,0.08);border:1.5px solid rgba(233,22,78,0.4);border-left:4px solid #E9164E;border-radius:0 10px 10px 0;padding:10px 14px;">
+      <div style="font-size:10px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">AI-First Era</div>
+      <div style="color:#013B68;font-size:13px;line-height:1.4;">Face Scan · Smart Health Reports · AI-native hires.</div>
+    </div>
+  </div>
+
+  <!-- Footers -->
+  <div style="position:absolute;bottom:30px;left:80px;width:980px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;color:rgba(255,255,255,0.35);font-size:12px;letter-spacing:1.5px;z-index:3;">Redcliffe Labs &middot; CHRO Confex 2026</div>
+  <div style="position:absolute;bottom:30px;right:80px;width:200px;border-top:1px solid rgba(1,59,104,0.15);padding-top:12px;color:rgba(1,59,104,0.45);font-size:12px;letter-spacing:2px;font-weight:600;text-align:right;z-index:3;">02 / 08</div>
+
 </div>
 
   </template>
