@@ -659,7 +659,7 @@
   <!-- RIGHT HALF: India map -->
   <div style="position:absolute;top:0;left:560px;width:1360px;height:1080px;z-index:1;overflow:hidden;">
     <img src="india new logo.png"
-         style="width:100%;height:100%;object-fit:cover;object-position:center;"
+         style="width:100%;height:100%;object-fit:contain;object-position:center;"
          alt="Redcliffe Labs India Map" />
     <!-- Left-edge fade blending into navy left panel -->
     <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#013B68,transparent);"></div>
@@ -1367,67 +1367,93 @@
         </div>
       </div>
 
-      <!-- Visual camp battery grid — 2×3 chip tiles -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <!-- Visual camp battery grid — 2×6 chip tiles -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;">
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Blood Tests &amp; Vitals</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Blood Tests</div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/><path d="M7 10 L10 13 L14 8 L17 11"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">ECG &amp; X-Ray</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Vitals — BP, BMI, SpO2</div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M8 8a4 4 0 0 0 8 0"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 6 9 9 15 12 6 15 12 18 9 21 12"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Eye &amp; Dental</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">ECG</div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Audiometry &amp; PFT</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">X-Ray</div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Doctor Consultation</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Audiometry</div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="14"/><line x1="15" y1="22" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
           </div>
-          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">First Aid Training</div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Spirometry (PFT)</div>
         </div>
-      </div>
 
-      <!-- Food Handlers row -->
-      <div class="tile tile-light" style="background:#013B68;border-color:transparent;">
-        <div class="tile-icon" style="background:rgba(255,255,255,0.12);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Eye Screening</div>
         </div>
-        <div>
-          <div class="tile-label" style="color:#fff;">Food Handlers Testing · Form 7</div>
-          <div class="tile-sub" style="color:rgba(255,255,255,0.55);">Factory Act compliance, FSSAI-ready</div>
-        </div>
-      </div>
 
-      <!-- Full camp battery strip -->
-      <div style="margin-top:auto;background:linear-gradient(135deg,rgba(233,22,78,0.08),rgba(1,59,104,0.06));border:1px solid rgba(1,59,104,0.12);border-radius:10px;padding:12px 16px;">
-        <div style="font-size:10px;font-weight:700;color:#E9164E;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Full Camp Battery</div>
-        <div style="font-size:12px;color:rgba(1,59,104,0.65);line-height:1.6;">Blood · Vitals · X-ray · ECG · Audiometry · PFT · Dental · Eye · Dr. Consultation · Form 7</div>
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Dental Screening</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Mental Wellness</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Dr. Consultation</div>
+        </div>
+
+        <div style="background:#013B68;border:1px solid transparent;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#FFFFFF;line-height:1.3;">Factories Compliance — Form 7</div>
+        </div>
+
+        <div style="background:#E9164E;border:1px solid transparent;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="14"/><line x1="15" y1="22" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#FFFFFF;line-height:1.3;">First Aid Trainings</div>
+        </div>
+
       </div>
     </div>
 
