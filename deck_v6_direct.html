@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redcliffe Labs · Deck v6</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --deck-width: 1920px;
+      --deck-height: 1080px;
+      --deck-scale: 1;
+      --accent: #e9164e;
+      --dot: rgba(255, 255, 255, 0.42);
+      --dot-active: #e9164e;
+      --motion: 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .deck-root {
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+
+    .deck-stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--deck-width);
+      height: var(--deck-height);
+      transform: translate(-50%, -50%) scale(var(--deck-scale));
+      transform-origin: center center;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .slide-shell {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translate3d(8%, 0, 0);
+      transition: transform var(--motion), opacity var(--motion);
+      pointer-events: none;
+      background: #000;
+    }
+
+    .slide-shell[data-state="active"] {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      z-index: 3;
+    }
+
+    .slide-shell[data-state="before"] {
+      opacity: 0;
+      transform: translate3d(-8%, 0, 0);
+      z-index: 2;
+    }
+
+    .slide-shell[data-state="after"] {
+      opacity: 0;
+      transform: translate3d(8%, 0, 0);
+      z-index: 2;
+    }
+
+    .slide-shell[data-state="far-before"] {
+      opacity: 0;
+      transform: translate3d(-16%, 0, 0);
+      z-index: 1;
+    }
+
+    .slide-shell[data-state="far-after"] {
+      opacity: 0;
+      transform: translate3d(16%, 0, 0);
+      z-index: 1;
+    }
+
+    .slide-host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    .nav-hit {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 8;
+    }
+
+    .nav-hit.prev {
+      left: 0;
+      width: 15%;
+      cursor: w-resize;
+    }
+
+    .nav-hit.next {
+      right: 0;
+      width: 85%;
+      cursor: e-resize;
+    }
+
+    .dot-nav {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 100;
+    }
+
+    .dot-nav button {
+      width: 14px;
+      height: 14px;
+      border: 0;
+      padding: 0;
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .dot-nav button::before,
+    .dot-nav button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 999px;
+      transition: all 180ms ease;
+    }
+
+    .dot-nav button::before {
+      width: 7px;
+      height: 7px;
+      background: var(--dot);
+    }
+
+    .dot-nav button::after {
+      width: 14px;
+      height: 14px;
+      border: 1px solid transparent;
+      opacity: 0;
+    }
+
+    .dot-nav button.active::before,
+    .dot-nav button:hover::before {
+      background: var(--dot-active);
+      box-shadow: 0 0 14px rgba(233, 22, 78, 0.52);
+    }
+
+    .dot-nav button.active::after {
+      border-color: rgba(233, 22, 78, 0.46);
+      opacity: 1;
+    }
+
+    template {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .dot-nav {
+        left: 50%;
+        right: auto;
+        bottom: 18px;
+        top: auto;
+        transform: translateX(-50%);
+        flex-direction: row;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-root">
+    <div class="deck-stage" id="deckStage">
+      <div class="nav-hit prev" id="prevHit" aria-hidden="true"></div>
+      <div class="nav-hit next" id="nextHit" aria-hidden="true"></div>
+    </div>
+    <div class="dot-nav" id="dotNav" aria-label="Slide navigation"></div>
+  </div>
+  <template id="slide-template-1">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;font-family:'Poppins',sans-serif;background:#013B68;">
+  <div class="grain"></div>
+  <div class="cm" style="top:28px;left:28px;"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="top:28px;right:28px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="bottom:28px;right:28px;transform:rotate(180deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="bottom:28px;left:28px;transform:rotate(270deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <!-- ── Logo — top right (absolute) ── -->
+  <img src="nelogo.png"
+    style="position:absolute;top:80px;right:240px;width:240px;height:60px;object-fit:contain;z-index:3;"
+    alt="Redcliffe Labs" />
+
+  <!-- ── Lab image — vertically centred in right zone ── -->
+  <img src="assets/lab_machines.png"
+    style="position:absolute;top:220px;right:60px;width:600px;height:530px;object-fit:cover;object-position:center center;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.45);z-index:3;"
+    alt="Redcliffe Labs" />
+
+  <!-- ── Abhay: small headshot + name block — bottom right, separate from lab image ── -->
+  <div style="position:absolute;bottom:106px;right:110px;width:500px;z-index:3;display:flex;flex-direction:row;align-items:center;gap:26px;">
+    <!-- Small circular headshot -->
+    <div style="width:118px;height:118px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(233,22,78,0.6);">
+      <img src="assets/abhay_headshot.png"
+        style="width:100%;height:100%;object-fit:cover;object-position:top center;"
+        alt="Abhay Singavi" />
+    </div>
+    <!-- Name text -->
+    <div style="border-left:2px solid rgba(233,22,78,0.5);padding-left:22px;">
+      <div style="color:#FFFFFF;font-size:27px;font-weight:800;line-height:1.2;">Abhay Singavi</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:18px;font-weight:400;margin-top:7px;">Chief Business Officer · Redcliffe Labs</div>
+      <div style="color:rgba(255,255,255,0.4);font-size:16px;font-weight:400;margin-top:4px;">19 Years in Healthcare Strategy</div>
+    </div>
+  </div>
+
+  <!-- ── Main content — flows left ── -->
+  <div style="position:relative;z-index:1;height:1080px;padding:64px 56px 48px 80px;display:flex;flex-direction:column;">
+
+    <!-- Pill + Headline -->
+    <div style="margin-bottom:16px;"><span class="pill">Thought Leadership</span></div>
+    <div class="ff" style="color:#FFFFFF;font-size:68px;font-weight:800;line-height:0.98;letter-spacing:-2px;margin-bottom:6px;">The Insight That</div>
+    <div class="ff" style="color:#E9164E;font-size:68px;font-weight:800;line-height:0.98;letter-spacing:-2px;">Started Everything</div>
+
+    <!-- Crimson rule -->
+    <div style="width:72px;height:4px;background:#E9164E;margin:20px 0 28px;"></div>
+
+    <!-- Career timeline — 5 steps -->
+    <div style="display:flex;flex-direction:row;align-items:flex-start;position:relative;margin-bottom:32px;max-width:1100px;">
+      <div style="position:absolute;top:14px;left:14px;right:14px;height:1px;background:rgba(255,255,255,0.18);z-index:0;"></div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
+          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">01</span>
+        </div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Narayana</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Made healthcare affordable to the bottom of the pyramid</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
+          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">02</span>
+        </div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Medanta</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Built upmarket, high-accuracy care at scale</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="width:26px;height:26px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);">
+          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">03</span>
+        </div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">PolicyBazaar</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;margin-top:2px;">Found the margin map — Diagnostics at 60–65% GM</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(233,22,78,0.55);margin-top:-2px;">
+          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">04</span>
+        </div>
+        <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;line-height:1.2;">Healthians</div>
+        <div style="color:rgba(255,255,255,0.55);font-size:12px;font-weight:500;margin-top:2px;">Proved home collection works — built the model first</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+        <div style="width:36px;height:36px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(233,22,78,0.65);margin-top:-4px;">
+          <span style="color:#FFFFFF;font-size:10px;font-weight:700;">05</span>
+        </div>
+        <div style="color:#E9164E;font-size:15px;font-weight:800;margin-top:8px;line-height:1.2;">Redcliffe Labs</div>
+        <div style="color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;margin-top:2px;">CBO · Current</div>
+        <div style="color:rgba(255,255,255,0.35);font-size:11px;font-weight:400;margin-top:1px;">Tech-first. Born.</div>
+      </div>
+    </div>
+
+    <!-- Pyramid + callouts -->
+    <div style="flex:1;display:flex;flex-direction:row;align-items:center;gap:44px;">
+
+      <svg width="500" height="300" viewBox="0 0 540 320" style="flex-shrink:0;">
+        <defs>
+          <linearGradient id="t4" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#092840"/><stop offset="100%" stop-color="#010e1c"/>
+          </linearGradient>
+          <linearGradient id="t3" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0d3558"/><stop offset="100%" stop-color="#011e38"/>
+          </linearGradient>
+          <linearGradient id="t2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#154e7e"/><stop offset="100%" stop-color="#0a2e50"/>
+          </linearGradient>
+          <linearGradient id="t1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f0315c"/><stop offset="100%" stop-color="#be0c3a"/>
+          </linearGradient>
+        </defs>
+        <polygon points="20,20 520,20 460,87 80,87" fill="url(#t1)"/>
+        <text x="270" y="48" text-anchor="middle" fill="white" font-size="16" font-family="Poppins" font-weight="800">DIAGNOSTICS</text>
+        <text x="270" y="68" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="13" font-family="Poppins">60–65% Gross Margin</text>
+        <polygon points="80,93 460,93 400,160 140,160" fill="url(#t2)"/>
+        <text x="270" y="121" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-family="Poppins" font-weight="600">OPD</text>
+        <text x="270" y="141" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="13" font-family="Poppins">30–35% GM</text>
+        <polygon points="140,166 400,166 340,233 200,233" fill="url(#t3)"/>
+        <text x="270" y="194" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="16" font-family="Poppins" font-weight="600">Hospitals</text>
+        <text x="270" y="214" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="13" font-family="Poppins">22% GM</text>
+        <polygon points="200,239 340,239 270,306" fill="url(#t4)"/>
+        <text x="270" y="268" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="13" font-family="Poppins" font-weight="600">Home Care</text>
+        <text x="270" y="284" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="13" font-family="Poppins">20% GM</text>
+        <line x1="8" y1="20" x2="8" y2="306" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <line x1="4" y1="20" x2="12" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <line x1="4" y1="306" x2="12" y2="306" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      </svg>
+
+      <!-- Annotation callouts -->
+      <div style="display:flex;flex-direction:column;gap:18px;">
+
+        <div style="border-left:3px solid #E9164E;padding-left:18px;">
+          <div style="color:#E9164E;font-size:44px;font-weight:800;line-height:1;letter-spacing:-2px;">60–65%</div>
+          <div style="color:rgba(255,255,255,0.75);font-size:15px;font-weight:400;margin-top:4px;">Gross Margin · Diagnostics Segment</div>
+        </div>
+
+        <div style="border-left:3px solid rgba(255,255,255,0.15);padding-left:18px;">
+          <div style="color:rgba(255,255,255,0.5);font-size:32px;font-weight:700;line-height:1;letter-spacing:-1px;">22%</div>
+          <div style="color:rgba(255,255,255,0.35);font-size:15px;font-weight:400;margin-top:4px;">Gross Margin · Hospitals</div>
+        </div>
+
+        <div style="background:rgba(233,22,78,0.08);border:1px solid rgba(233,22,78,0.3);border-radius:10px;padding:18px 20px;max-width:420px;">
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;">The Gap Nobody Filled</div>
+          <div style="color:rgba(255,255,255,0.85);font-size:14px;font-weight:400;line-height:1.6;">From <span style="color:#FFFFFF;font-weight:600;">Dabur to SpiceJet</span>, COVID triggered a rush into healthcare — everyone chasing medicine delivery, everyone hitting wafer-thin margins. When they turned to diagnostics, the biggest labs were white elephants. No tech. No vision.</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(233,22,78,0.2);color:#E9164E;font-size:14px;font-weight:700;">That gap became Redcliffe.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+      <div style="color:rgba(255,255,255,0.55);font-size:13px;font-style:italic;line-height:1.4;max-width:700px;">19 years. One clear thesis: diagnostics is the highest-margin, highest-impact category in Indian healthcare.</div>
+      <div style="color:rgba(255,255,255,0.2);font-size:12px;letter-spacing:1.5px;flex-shrink:0;">CHRO Confex · Bengaluru · April 2026 &nbsp;·&nbsp; 01 / 07</div>
+    </div>
+
+  </div>
+</div>
+
+  </template>
+  <template id="slide-template-2">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #000; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;display:flex;font-family:'Poppins',sans-serif;">
+
+  <!-- LEFT PANEL — 55% — White — THE BURDEN (bar chart design) -->
+  <div style="width:55%;background:#FFFFFF;padding:80px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;">
+
+    <div style="text-transform:uppercase;color:#E9164E;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:16px;">Disease Burden</div>
+    <div style="color:#013B68;font-size:40px;font-weight:700;line-height:1.2;margin-bottom:12px;">India's Workforce Is Running On Empty.</div>
+    <div style="width:100%;height:2px;background:#E9164E;margin-bottom:36px;"></div>
+
+    <!-- Horizontal bar chart rows -->
+    <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:32px;">
+
+      <!-- Row 1: 220M+ — Hypertension -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <div style="font-size:20px;font-weight:600;color:#444;">Uncontrolled Hypertension</div>
+          <div style="font-size:30px;font-weight:800;color:#E9164E;letter-spacing:-1px;">220M+</div>
+        </div>
+        <div style="background:#F4F6F9;border-radius:5px;height:40px;overflow:hidden;position:relative;">
+          <div style="width:88%;height:100%;background:linear-gradient(to right,#E9164E,#f54070);border-radius:5px;display:flex;align-items:center;padding-left:14px;">
+            <span style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;">More than any nation on earth</span>
+          </div>
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#aaa;font-weight:500;">Lancet / BMC, 2024</div>
+        </div>
+      </div>
+
+      <!-- Row 2: 7 in 10 — Vitamin D -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <div style="font-size:20px;font-weight:600;color:#444;">Vitamin D Deficiency</div>
+          <div style="font-size:30px;font-weight:800;color:#E9164E;letter-spacing:-1px;">7 in 10</div>
+        </div>
+        <div style="background:#F4F6F9;border-radius:5px;height:40px;overflow:hidden;position:relative;">
+          <div style="width:70%;height:100%;background:linear-gradient(to right,#E9164E,#f54070);border-radius:5px;display:flex;align-items:center;padding-left:14px;">
+            <span style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;">70% of your employees</span>
+          </div>
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#aaa;font-weight:500;">NIH / PMC</div>
+        </div>
+      </div>
+
+      <!-- Row 3: 8 in 10 — Abnormal Lipid -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <div style="font-size:20px;font-weight:600;color:#444;">Abnormal Lipid Parameter</div>
+          <div style="font-size:30px;font-weight:800;color:#E9164E;letter-spacing:-1px;">8 in 10</div>
+        </div>
+        <div style="background:#F4F6F9;border-radius:5px;height:40px;overflow:hidden;position:relative;">
+          <div style="width:80%;height:100%;background:linear-gradient(to right,#c50e38,#E9164E);border-radius:5px;display:flex;align-items:center;padding-left:14px;">
+            <span style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;">80% of your employees</span>
+          </div>
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#aaa;font-weight:500;">ICMR-INDIAB</div>
+        </div>
+      </div>
+
+      <!-- Row 4: $14B — Absenteeism — Navy bar -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <div style="font-size:20px;font-weight:600;color:#444;">Annual Absenteeism Cost</div>
+          <div style="font-size:30px;font-weight:800;color:#013B68;letter-spacing:-1px;">$14B</div>
+        </div>
+        <div style="background:#F4F6F9;border-radius:5px;height:40px;overflow:hidden;position:relative;">
+          <div style="width:85%;height:100%;background:linear-gradient(to right,#013B68,#0a5498);border-radius:5px;display:flex;align-items:center;padding-left:14px;">
+            <span style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;">Lost to India Inc. annually</span>
+          </div>
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#aaa;font-weight:500;">Deloitte</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hypertension quote -->
+    <div style="background:#013B68;border-radius:12px;padding:18px 24px;display:flex;align-items:center;gap:16px;">
+      <div style="width:4px;min-height:40px;background:#E9164E;border-radius:2px;flex-shrink:0;"></div>
+      <div style="color:rgba(255,255,255,0.9);font-size:17px;font-weight:600;font-style:italic;line-height:1.5;">"India has more hypertensives than any nation on earth."</div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL — 45% — Navy — THE BUILD -->
+  <div style="width:45%;background:#013B68;padding:80px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;">
+    <div class="grain"></div>
+
+    <!-- Dot texture -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="dp" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.5" fill="white"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#dp)"/>
+    </svg>
+
+    <!-- TOP BLOCK -->
+    <div style="position:relative;z-index:1;margin-top:18px;">
+      <div style="margin-bottom:16px;"><span class="pill">The Build</span></div>
+      <div class="ff" style="color:#FFFFFF;font-size:60px;font-weight:800;line-height:0.95;letter-spacing:-2px;">Built Different.</div>
+      <div class="ff" style="color:#E9164E;font-size:60px;font-weight:800;line-height:0.95;letter-spacing:-1.5px;">For a Sick India.</div>
+      <div style="width:80px;height:4px;background:#E9164E;margin-top:28px;"></div>
+    </div>
+
+    <!-- MIDDLE BLOCK — 3 enriched cues -->
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:26px;margin-top:52px;">
+
+      <!-- Cue 1: Home Collection -->
+      <div style="display:flex;align-items:flex-start;gap:18px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div style="border-left:3px solid #E9164E;padding-left:16px;">
+          <div style="color:#FFFFFF;font-size:20px;font-weight:700;line-height:1.38;">Home Collection — at your door, not your doctor's</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:14px;font-weight:400;line-height:1.62;margin-top:6px;">1,500+ phlebotomists · 10,000+ collections/day · 220+ cities</div>
+        </div>
+      </div>
+
+      <!-- Cue 2: Quality at Scale -->
+      <div style="display:flex;align-items:flex-start;gap:18px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <div style="border-left:3px solid #E9164E;padding-left:16px;">
+          <div style="color:#FFFFFF;font-size:20px;font-weight:700;line-height:1.38;">Quality at Scale — NABL-accredited, not corner-lab</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:14px;font-weight:400;line-height:1.62;margin-top:6px;">80+ labs · 22M+ tests in 2025 · 94% on-time report delivery</div>
+        </div>
+      </div>
+
+      <!-- Cue 3: Tier 2/3 -->
+      <div style="display:flex;align-items:flex-start;gap:18px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div style="border-left:3px solid #E9164E;padding-left:16px;">
+          <div style="color:#FFFFFF;font-size:20px;font-weight:700;line-height:1.38;">Tier 2 &amp; Tier 3 — where the need is greatest</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:14px;font-weight:400;line-height:1.62;margin-top:6px;">2,200+ collection centres · 3,000+ health camps monthly</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM — Outcome cards -->
+    <div style="position:relative;z-index:1;display:flex;flex-direction:row;gap:16px;margin-top:34px;">
+      <div style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:6px;color:#E9164E;white-space:nowrap;flex-shrink:0;">
+          <span style="font-size:32px;font-weight:800;line-height:1;">↓</span>
+          <span style="font-size:40px;font-weight:800;line-height:1;letter-spacing:-2px;">25%</span>
+        </div>
+        <div>
+          <div style="color:#FFFFFF;font-size:16px;font-weight:600;">Absenteeism</div>
+          <div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:2px;">with preventive care programmes</div>
+        </div>
+      </div>
+      <div style="flex:1;background:rgba(233,22,78,0.15);border:1px solid rgba(233,22,78,0.35);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:6px;color:#E9164E;white-space:nowrap;flex-shrink:0;">
+          <span style="font-size:32px;font-weight:800;line-height:1;">↑</span>
+          <span style="font-size:40px;font-weight:800;line-height:1;letter-spacing:-2px;">20%</span>
+        </div>
+        <div>
+          <div style="color:#FFFFFF;font-size:16px;font-weight:600;">Productivity</div>
+          <div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:2px;">studies on early detection programmes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide number -->
+    <div style="color:rgba(255,255,255,0.25);font-size:14px;font-weight:400;position:absolute;bottom:80px;left:80px;z-index:1;">03 / 07</div>
+
+    <!-- Left crimson accent strip -->
+    <div style="position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(to bottom,#E9164E,rgba(233,22,78,0.2));"></div>
+  </div>
+
+  <!-- Logo top-right -->
+  <img src="nelogo.png" style="position:absolute;top:28px;right:28px;height:64px;object-fit:contain;" alt="Redcliffe Labs" />
+</div>
+
+  </template>
+  <template id="slide-template-3">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;font-family:'Poppins',sans-serif;background:#013B68;">
+  <div class="grain"></div>
+  <div class="cm" style="top:28px;left:28px;"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="top:28px;right:28px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="bottom:28px;right:28px;transform:rotate(180deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="cm" style="bottom:28px;left:28px;transform:rotate(270deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <!-- Background SVG dot pattern -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="dp3" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="16" cy="16" r="1.5" fill="white"/></pattern></defs>
+    <rect width="100%" height="100%" fill="url(#dp3)"/>
+  </svg>
+
+  <!-- Left content panel -->
+  <div style="position:absolute;top:0;left:0;width:560px;height:1080px;padding:64px 60px;display:flex;flex-direction:column;z-index:2;">
+
+    <!-- Logo -->
+    <div style="margin-bottom:32px;">
+      <img src="nelogo.png" style="height:64px;object-fit:contain;" alt="Redcliffe Labs" />
+    </div>
+
+    <!-- Pill + Headline -->
+    <div style="margin-bottom:20px;"><span class="pill">National Scale</span></div>
+    <div class="ff" style="color:#FFFFFF;font-size:56px;font-weight:800;line-height:1.0;letter-spacing:-1.5px;margin-bottom:12px;">10 Million</div>
+    <div class="ff" style="color:#FFFFFF;font-size:56px;font-weight:800;line-height:1.0;letter-spacing:-1.5px;margin-bottom:12px;">Indians.</div>
+    <div class="ff" style="color:#E9164E;font-size:56px;font-weight:800;line-height:1.0;letter-spacing:-1.5px;margin-bottom:24px;">And Counting.</div>
+    <div style="width:56px;height:3px;background:#E9164E;margin-bottom:24px;"></div>
+
+    <div style="color:rgba(255,255,255,0.6);font-size:18px;font-weight:400;line-height:1.65;margin-bottom:32px;">
+      The only diagnostics company with true home-collection scale — from metros to Tier 3 towns.
+    </div>
+
+    <!-- Stat callouts -->
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:auto;">
+
+      <!-- 700+ Corporate Clients -->
+      <div style="background:rgba(233,22,78,0.15);border:1px solid rgba(233,22,78,0.35);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:40px;font-weight:800;color:#E9164E;line-height:1;min-width:90px;">700+</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFFFFF;">Corporate Clients</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);">Trusting Redcliffe Labs</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1;min-width:90px;">22M+</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFFFFF;">Tests in 2025</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);">Across NABL-accredited labs</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:36px;font-weight:800;color:#E9164E;line-height:1;min-width:90px;">₹417Cr+</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFFFFF;">Savings for Families</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);">Affordable diagnostics at scale</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1;min-width:90px;">3,000+</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFFFFF;">Health Camps monthly</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);">1 Lakh lives touched every month</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer caption + Slide number -->
+    <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+      <div style="color:rgba(255,255,255,0.3);font-size:13px;font-weight:400;">80+ Labs · 2,200+ Collection Centres · 220+ Cities</div>
+    </div>
+    <div style="color:rgba(255,255,255,0.15);font-size:12px;letter-spacing:3px;font-weight:600;margin-top:12px;">02 / 07</div>
+  </div>
+
+  <!-- RIGHT HALF: Network map -->
+  <div style="position:absolute;top:0;left:560px;width:1360px;height:1080px;z-index:1;overflow:hidden;">
+    <img src="assets/network_map.png"
+         style="width:100%;height:100%;object-fit:contain;object-position:center;"
+         alt="Redcliffe Labs Network Map" />
+    <!-- Left-edge fade blending into navy left panel -->
+    <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#013B68,transparent);"></div>
+    <!-- Right-edge fade -->
+    <div style="position:absolute;top:0;right:0;width:80px;height:100%;background:linear-gradient(to left,#013B68,transparent);"></div>
+  </div>
+
+</div>
+
+  </template>
+  <template id="slide-template-4">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #000; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;display:flex;font-family:'Poppins',sans-serif;">
+
+  <!-- LEFT PANEL: Logo wall -->
+  <div style="width:960px;height:1080px;background:#F8F4EF;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden;">
+
+    <!-- Grid texture background -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid4" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(1,59,104,0.07)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid4)"/>
+      <pattern id="dots4" width="40" height="40" patternUnits="userSpaceOnUse">
+        <circle cx="0" cy="0" r="1.5" fill="rgba(1,59,104,0.12)"/>
+      </pattern>
+      <rect width="100%" height="100%" fill="url(#dots4)"/>
+    </svg>
+
+    <!-- Subtle radial glow -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.8) 0%,rgba(244,246,249,0) 70%);pointer-events:none;"></div>
+
+    <!-- Label -->
+    <div style="font-size:13px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;position:relative;z-index:1;text-align:center;">700+ Companies Trust Us</div>
+
+    <!-- Client logo image -->
+    <img src="assets/client_logos.png" style="max-width:780px;max-height:640px;object-fit:contain;position:relative;z-index:1;" alt="Client Logos" />
+
+    <!-- Bottom accent line -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(to right,transparent,#E9164E,transparent);"></div>
+  </div>
+
+  <!-- RIGHT PANEL: Journey flow (replacing feature cards) -->
+  <div style="width:960px;height:1080px;background:#FFFFFF;padding:80px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;">
+
+    <!-- Subtle grid background on white -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.4;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid4w" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(1,59,104,0.05)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid4w)"/>
+    </svg>
+
+    <div style="position:relative;z-index:1;">
+      <!-- Pill + Headline -->
+      <div style="margin-bottom:16px;"><span class="pill">Your Onboarding Journey</span></div>
+      <div class="ff" style="font-size:48px;font-weight:800;color:#013B68;line-height:1.1;">Trusted by India's Best.</div>
+      <div class="ff" style="font-size:48px;font-weight:800;color:#013B68;line-height:1.1;margin-bottom:8px;">Built for Your Workforce.</div>
+      <div style="font-size:20px;font-weight:400;color:#555;line-height:1.4;margin-bottom:8px;">Up and running in 30 minutes. Zero setup friction.</div>
+
+      <!-- Crimson rule -->
+      <div style="width:80px;height:3px;background:#E9164E;margin:20px 0 36px;"></div>
+
+      <!-- 4-step journey cards -->
+      <div style="display:flex;flex-direction:column;gap:18px;">
+
+        <div style="border-left:4px solid #E9164E;background:#F4F6F9;border-radius:0 12px 12px 0;padding:18px 24px;">
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Day 0</div>
+          <div style="font-size:20px;font-weight:700;color:#013B68;">Assign Account Manager</div>
+          <div style="font-size:15px;font-weight:400;color:#555;margin-top:3px;">Dedicated point of contact. Knows your workforce, your gaps, your goals.</div>
+        </div>
+
+        <div style="border-left:4px solid #E9164E;background:#F4F6F9;border-radius:0 12px 12px 0;padding:18px 24px;">
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Day 1</div>
+          <div style="font-size:20px;font-weight:700;color:#013B68;">Build Your Package</div>
+          <div style="font-size:15px;font-weight:400;color:#555;margin-top:3px;">Choose tests, set frequency, define camps. Fully customised to your people.</div>
+        </div>
+
+        <div style="border-left:4px solid #E9164E;background:#F4F6F9;border-radius:0 12px 12px 0;padding:18px 24px;">
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">30 Minutes</div>
+          <div style="font-size:20px;font-weight:700;color:#013B68;">Portal Goes Live</div>
+          <div style="font-size:15px;font-weight:400;color:#555;margin-top:3px;">Employee-facing dashboard active. HR reporting live. No IT effort required.</div>
+        </div>
+
+        <div style="border-left:4px solid #013B68;background:#013B68;border-radius:0 12px 12px 0;padding:18px 24px;">
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Ongoing</div>
+          <div style="font-size:20px;font-weight:700;color:#fff;">Track &amp; Act</div>
+          <div style="font-size:15px;font-weight:400;color:rgba(255,255,255,0.65);margin-top:3px;">Real-time analytics, camp scheduling, anomaly alerts. Your health partner, always on.</div>
+        </div>
+
+      </div>
+
+      <!-- 3 outcome pills -->
+      <div style="display:flex;gap:16px;margin-top:28px;">
+        <div style="flex:1;background:#F4F6F9;border-radius:10px;padding:14px 18px;text-align:center;">
+          <div style="font-size:26px;font-weight:800;color:#E9164E;">↓25%</div>
+          <div style="font-size:13px;font-weight:600;color:#013B68;margin-top:3px;">Absenteeism</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">with preventive care</div>
+        </div>
+        <div style="flex:1;background:#F4F6F9;border-radius:10px;padding:14px 18px;text-align:center;">
+          <div style="font-size:26px;font-weight:800;color:#E9164E;">↑20%</div>
+          <div style="font-size:13px;font-weight:600;color:#013B68;margin-top:3px;">Productivity</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">early detection programmes</div>
+        </div>
+        <div style="flex:1;background:#F4F6F9;border-radius:10px;padding:14px 18px;text-align:center;">
+          <div style="font-size:26px;font-weight:800;color:#E9164E;">80+</div>
+          <div style="font-size:13px;font-weight:600;color:#013B68;margin-top:3px;">NPS Score</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">among corporate partners</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo top-right -->
+    <img src="nelogo.png" style="position:absolute;top:28px;right:28px;height:64px;object-fit:contain;z-index:2;" alt="Redcliffe Labs" />
+    <!-- Slide number -->
+    <div style="position:absolute;bottom:28px;right:28px;font-size:14px;color:rgba(1,59,104,0.3);font-weight:600;z-index:2;">04</div>
+  </div>
+
+</div>
+
+  </template>
+  <template id="slide-template-5">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #000; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:'Poppins',sans-serif;">
+
+  <!-- TOP SECTION: Hero (56% ≈ 605px) — navy bg -->
+  <div style="height:605px;background:#013B68;padding:48px 80px 40px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;gap:80px;flex-shrink:0;position:relative;overflow:hidden;">
+    <div class="grain"></div>
+    <div class="cm" style="top:20px;left:20px;"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="cm" style="top:20px;right:20px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Dot texture -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.05;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="dp5" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.5" fill="white"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#dp5)"/>
+    </svg>
+
+    <!-- Left text block -->
+    <div style="flex:none;width:560px;position:relative;z-index:1;">
+      <img src="nelogo.png" style="height:64px;object-fit:contain;display:block;margin-bottom:24px;" alt="Redcliffe Labs" />
+
+      <div style="margin-bottom:16px;"><span class="pill">Smart Setup</span></div>
+      <div class="ff" style="color:#FFFFFF;font-size:56px;font-weight:800;line-height:1.1;">Your Health Program.</div>
+      <div class="ff" style="color:#E9164E;font-size:56px;font-weight:800;line-height:1.1;">Live in 30 Minutes.</div>
+
+      <div style="width:60px;height:3px;background:#E9164E;margin:20px 0 24px;"></div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <div style="display:flex;flex-direction:row;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div style="color:rgba(255,255,255,0.85);font-size:20px;">White-labelled portal &middot; Branded for your employees</div>
+        </div>
+
+        <div style="display:flex;flex-direction:row;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div style="color:rgba(255,255,255,0.85);font-size:20px;">API or iFrame embed — zero IT overhead</div>
+        </div>
+
+        <div style="display:flex;flex-direction:row;align-items:center;gap:14px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(233,22,78,0.2);border:1px solid rgba(233,22,78,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div style="color:rgba(255,255,255,0.85);font-size:20px;">"30 minutes" to go live &middot; Zero setup friction</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: App mockup -->
+    <div style="flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;">
+      <!-- iFrame label badge — above the frame -->
+      <div style="margin-bottom:10px;">
+        <div style="background:rgba(233,22,78,0.15);border:1px solid rgba(233,22,78,0.4);border-radius:6px;padding:6px 18px;display:inline-block;">
+          <span style="color:#E9164E;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">&lt;iFrame&gt; Embedded Wellness Portal</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;overflow:hidden;height:470px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.4);width:100%;">
+
+        <!-- Browser top bar -->
+        <div style="background:rgba(0,0,0,0.25);height:38px;padding:0 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <div style="width:11px;height:11px;background:#FF5F57;border-radius:50%;"></div>
+          <div style="width:11px;height:11px;background:#FFBD2E;border-radius:50%;"></div>
+          <div style="width:11px;height:11px;background:#28C840;border-radius:50%;"></div>
+          <div style="background:rgba(255,255,255,0.1);height:22px;border-radius:11px;flex:1;margin:0 16px;display:flex;align-items:center;padding:0 14px;">
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">app.redcliffelabs.com/employee-portal</div>
+          </div>
+        </div>
+
+        <!-- App body -->
+        <div style="display:flex;flex-direction:row;height:calc(470px - 38px);flex:1;">
+
+          <!-- Left sidebar -->
+          <div style="background:rgba(0,0,0,0.2);width:150px;padding:16px 10px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+
+            <div style="background:rgba(255,255,255,0.95);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              <div style="color:#013B68;font-size:12px;font-weight:700;">Dashboard</div>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div style="color:rgba(255,255,255,0.5);font-size:12px;">Book Test</div>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div style="color:rgba(255,255,255,0.5);font-size:12px;">My Reports</div>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <div style="color:rgba(255,255,255,0.5);font-size:12px;">Health Camp</div>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <div style="color:rgba(255,255,255,0.5);font-size:12px;">Wellness</div>
+            </div>
+          </div>
+
+          <!-- Main content area -->
+          <div style="flex:1;padding:18px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box;">
+
+            <!-- KPI stat cards -->
+            <div style="display:flex;flex-direction:row;gap:10px;">
+              <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;">
+                <div style="color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">On-Time Reports</div>
+                <div style="color:#FFFFFF;font-size:34px;font-weight:800;line-height:1;letter-spacing:-1px;">94%</div>
+              </div>
+              <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;">
+                <div style="color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Enrolled</div>
+                <div style="color:#4ade80;font-size:34px;font-weight:800;line-height:1;letter-spacing:-1px;">847</div>
+              </div>
+              <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;">
+                <div style="color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">At Risk</div>
+                <div style="color:#E9164E;font-size:34px;font-weight:800;line-height:1;letter-spacing:-1px;">23</div>
+              </div>
+              <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;">
+                <div style="color:rgba(255,255,255,0.45);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">NPS Score</div>
+                <div style="color:#FFFFFF;font-size:34px;font-weight:800;line-height:1;letter-spacing:-1px;">80</div>
+              </div>
+            </div>
+
+            <!-- Participation chart -->
+            <div style="background:rgba(255,255,255,0.05);flex:1;border-radius:10px;padding:14px;display:flex;flex-direction:column;">
+              <div style="color:rgba(255,255,255,0.7);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Participation by Dept</div>
+              <div style="display:flex;flex-direction:column;gap:8px;flex:1;justify-content:center;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5);width:70px;">Engineering</div>
+                  <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;"><div style="height:6px;width:82%;background:#E9164E;border-radius:3px;"></div></div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.4);width:28px;">82%</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5);width:70px;">Sales</div>
+                  <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;"><div style="height:6px;width:74%;background:rgba(233,22,78,0.6);border-radius:3px;"></div></div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.4);width:28px;">74%</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5);width:70px;">Ops</div>
+                  <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;"><div style="height:6px;width:91%;background:#4ade80;border-radius:3px;"></div></div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.4);width:28px;">91%</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5);width:70px;">Finance</div>
+                  <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;"><div style="height:6px;width:67%;background:rgba(233,22,78,0.5);border-radius:3px;"></div></div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.4);width:28px;">67%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Health alerts -->
+            <div style="background:rgba(233,22,78,0.08);border:1px solid rgba(233,22,78,0.2);border-radius:8px;padding:10px 14px;">
+              <div style="color:#E9164E;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Health Alerts</div>
+              <div style="color:rgba(255,255,255,0.6);font-size:12px;">3 employees: HbA1c elevated &nbsp;·&nbsp; 7 overdue annual checkups &nbsp;·&nbsp; Camp scheduled: May 12</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM SECTION: photo cols 1+2, dashboard col 3 -->
+  <div style="flex:1;background:#FFFFFF;display:flex;flex-direction:column;">
+
+    <div style="flex:1;display:flex;flex-direction:row;border-top:3px solid #E9164E;">
+
+      <!-- Columns 1+2: Real photo — Home Collection left, On-Site Camp right -->
+      <div style="flex:2;position:relative;overflow:hidden;">
+
+        <!-- Photo — crops out the label bar at bottom of source image -->
+        <img src="assets/home_collection_camp.png"
+          style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 15%;" />
+
+        <!-- Navy gradient overlay for text legibility -->
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(1,59,104,0.92) 0%,rgba(1,59,104,0.5) 50%,rgba(1,59,104,0.08) 100%);"></div>
+
+        <!-- Crimson vertical divider -->
+        <div style="position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(233,22,78,0.5);"></div>
+
+        <!-- Home Collection labels — bottom-left -->
+        <div style="position:absolute;bottom:24px;left:36px;width:calc(50% - 56px);">
+          <div style="color:#E9164E;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">Home Collection</div>
+          <div style="color:#FFFFFF;font-size:21px;font-weight:700;line-height:1.2;margin-bottom:10px;">At Your Door, Not Your Doctor's</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· 1,500+ trained phlebotomists across India</div>
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· 10,000+ collections every single day</div>
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· Digital report delivered directly to phone</div>
+          </div>
+        </div>
+
+        <!-- On-Site Camp labels — bottom-right -->
+        <div style="position:absolute;bottom:24px;left:calc(50% + 20px);width:calc(50% - 56px);">
+          <div style="color:#E9164E;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">On-Site Camp</div>
+          <div style="color:#FFFFFF;font-size:21px;font-weight:700;line-height:1.2;margin-bottom:10px;">Your Campus, Our Full Setup</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· 3,000+ camps monthly — trained medical teams</div>
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· Radiology, ECG, dental, eye — full setup</div>
+            <div style="color:rgba(255,255,255,0.82);font-size:15px;">· Zero logistics burden on your HR team</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Column 3: Wellness Dashboard -->
+      <div style="flex:1;padding:32px 40px;box-sizing:border-box;display:flex;flex-direction:column;border-left:1px solid #F0F0F0;">
+        <div style="width:52px;height:52px;background:#E9164E;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0;box-shadow:0 6px 18px rgba(233,22,78,0.35);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            <polyline points="7 13 10 10 13 13 17 8"/>
+          </svg>
+        </div>
+        <div style="color:#013B68;font-size:26px;font-weight:700;line-height:1.2;">Wellness Dashboard</div>
+        <div style="color:#E9164E;font-size:15px;font-weight:600;margin-top:4px;">Your Data, Your Decisions</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px;">
+          <div style="color:#555;font-size:16px;font-weight:400;">API / iFrame embed — live in 24 hours</div>
+          <div style="color:#555;font-size:16px;font-weight:400;">Analytics by age, parameter and department</div>
+          <div style="color:#555;font-size:16px;font-weight:400;">Dedicated Account Manager — always available</div>
+        </div>
+
+        <div style="margin-top:14px;flex:1;position:relative;overflow:hidden;border-radius:12px;border:1px solid #E7ECF2;box-shadow:0 10px 24px rgba(1,59,104,0.10);">
+          <img src="assets/wellness_dashboard_timeline.png"
+            alt="Wellness dashboard timeline view"
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;" />
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(1,59,104,0.88) 0%,rgba(1,59,104,0.42) 38%,rgba(1,59,104,0.06) 100%);"></div>
+          <div style="position:absolute;left:18px;right:18px;bottom:16px;">
+            <div style="color:#E9164E;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;">Live Tracking</div>
+            <div style="color:#FFFFFF;font-size:18px;font-weight:700;line-height:1.2;">Order-Level Timeline for Every Employee</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Compliance footer strip -->
+    <div style="height:52px;background:#013B68;padding:0 80px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="color:#E9164E;font-size:16px;font-weight:700;">&#9889;</span>
+        <span style="color:#FFFFFF;font-size:16px;font-weight:400;">New Labour Codes mandate annual health checkups for employees 40+ — this is now compliance, not a benefit</span>
+      </div>
+      <div style="color:rgba(255,255,255,0.3);font-size:14px;white-space:nowrap;">Slide 05 / 07</div>
+    </div>
+
+  </div>
+
+</div>
+
+  </template>
+  <template id="slide-template-6">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; }
+
+    /* Service tile chip */
+    .tile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .tile-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tile-label {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .tile-sub {
+      font-size: 12px;
+      font-weight: 400;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* Light column tiles */
+    .tile-light {
+      background: #FFFFFF;
+      border: 1px solid rgba(1,59,104,0.1);
+    }
+    .tile-light .tile-icon { background: rgba(233,22,78,0.1); }
+    .tile-light .tile-label { color: #013B68; }
+    .tile-light .tile-sub { color: rgba(1,59,104,0.5); }
+
+    /* Dark column tiles */
+    .tile-dark {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .tile-dark .tile-icon { background: rgba(233,22,78,0.2); }
+    .tile-dark .tile-label { color: #FFFFFF; }
+    .tile-dark .tile-sub { color: rgba(255,255,255,0.45); }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:'Poppins',sans-serif;background:#FFFFFF;">
+
+  <!-- ══════════════ TOP HEADER ══════════════ -->
+  <div style="background:#013B68;padding:0 72px;height:140px;box-sizing:border-box;flex-shrink:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;">
+    <div class="grain"></div>
+    <div class="cm" style="top:20px;left:20px;"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="cm" style="top:20px;right:20px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Dot texture -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.05;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="dp6" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.5" fill="white"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#dp6)"/>
+    </svg>
+
+    <!-- Left: headline -->
+    <div style="position:relative;z-index:1;">
+      <div style="margin-bottom:8px;"><span class="pill">Full-Spectrum Corporate Health</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px;">
+        <span class="ff" style="font-size:48px;font-weight:800;color:#FFFFFF;line-height:1;white-space:nowrap;">Everything Your Workforce Needs.</span>
+        <span class="ff" style="font-size:48px;font-weight:800;color:#E9164E;line-height:1;white-space:nowrap;">One Partner.</span>
+      </div>
+    </div>
+
+    <!-- Right: badges + logo -->
+    <div style="display:flex;align-items:center;gap:24px;flex-shrink:0;position:relative;z-index:1;">
+      <!-- Journey indicator pills -->
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:40px;padding:8px 20px;">
+        <div style="font-size:13px;font-weight:700;color:#E9164E;">JOINING</div>
+        <svg width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 5h16M13 1l4 4-4 4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);">WORKING</div>
+        <svg width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 5h16M13 1l4 4-4 4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);">HEALTH EVENTS</div>
+      </div>
+      <!-- 3,000+ badge -->
+      <div style="background:rgba(233,22,78,0.15);border:1.5px solid rgba(233,22,78,0.45);border-radius:10px;padding:10px 22px;text-align:center;flex-shrink:0;">
+        <div style="font-size:30px;font-weight:800;color:#E9164E;line-height:1;">3,000+</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;margin-top:2px;">Camps monthly</div>
+      </div>
+      <img src="nelogo.png" style="height:64px;object-fit:contain;" alt="Redcliffe Labs" />
+    </div>
+  </div>
+
+  <!-- ══════════════ 3 COLUMNS ══════════════ -->
+  <div style="flex:1;display:flex;flex-direction:row;border-top:3px solid #E9164E;">
+
+    <!-- ── Col 1: BEFORE THEY JOIN — light grey ── -->
+    <div style="flex:1;background:#F8F4EF;padding:28px 36px;box-sizing:border-box;display:flex;flex-direction:column;border-right:1.5px solid #E2E8F0;">
+
+      <!-- Column header -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:14px;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(233,22,78,0.3);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="4" rx="1"/>
+            <path d="M9 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-3"/>
+            <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;">Before They Join</div>
+          <div style="font-size:22px;font-weight:800;color:#013B68;line-height:1.1;">Pre-Employment</div>
+        </div>
+      </div>
+
+      <!-- Tiles -->
+      <div class="tile tile-light">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <div>
+          <div class="tile-label">Pre-Employment Checkup</div>
+          <div class="tile-sub">Full health baseline before day one</div>
+        </div>
+      </div>
+
+      <div class="tile tile-light">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="tile-label">Drug Abuse Testing</div>
+          <div class="tile-sub">Narcotics panel, legally compliant</div>
+        </div>
+      </div>
+
+      <div class="tile tile-light">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+        </div>
+        <div>
+          <div class="tile-label">Pre-Policy Medical (PPMC)</div>
+          <div class="tile-sub">Insurance medicals, same-day reports</div>
+        </div>
+      </div>
+
+      <div class="tile tile-light">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div>
+          <div class="tile-label">Aviation Crew Medical</div>
+          <div class="tile-sub">DGCA-compliant crew fitness checks</div>
+        </div>
+      </div>
+
+      <!-- Feature callout at base -->
+      <div style="margin-top:auto;background:linear-gradient(135deg,rgba(233,22,78,0.06),rgba(1,59,104,0.04));border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:#013B68;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div style="font-size:13px;color:rgba(1,59,104,0.7);line-height:1.4;"><span style="font-weight:700;color:#013B68;">Reports in 24 hrs.</span> Fully digital, no paperwork.</div>
+      </div>
+    </div>
+
+    <!-- ── Col 2: ONGOING WELLNESS — navy ── -->
+    <div style="flex:1;background:#013B68;padding:28px 36px;box-sizing:border-box;display:flex;flex-direction:column;border-right:1.5px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;">
+      <div class="grain"></div>
+
+      <!-- Dot bg texture -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.05;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+        <defs><pattern id="dp6c" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="1.2" fill="white"/></pattern></defs>
+        <rect width="100%" height="100%" fill="url(#dp6c)"/>
+      </svg>
+
+      <!-- Column header -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;position:relative;z-index:1;">
+        <div style="width:52px;height:52px;border-radius:14px;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(233,22,78,0.4);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;">Ongoing Wellness</div>
+          <div style="font-size:22px;font-weight:800;color:#FFFFFF;line-height:1.1;">Year-Round Care</div>
+        </div>
+      </div>
+
+      <!-- Tiles — dark style -->
+      <div style="position:relative;z-index:1;">
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Annual Health Checkups</div>
+            <div class="tile-sub">Home collection + office-visit options</div>
+          </div>
+        </div>
+
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Vaccination Drives</div>
+            <div class="tile-sub">Flu, Hepatitis B, seasonal flu campaigns</div>
+          </div>
+        </div>
+
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Monthly Health Days</div>
+            <div class="tile-sub">Expert talks + health awareness events</div>
+          </div>
+        </div>
+
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Plan &amp; Celebrate Health Days</div>
+            <div class="tile-sub">Curated wellness calendar for your team</div>
+          </div>
+        </div>
+
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Medical Room Management</div>
+            <div class="tile-sub">On-site nurse + first aid protocol</div>
+          </div>
+        </div>
+
+        <div class="tile tile-dark">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <div class="tile-label">Executive Checkups with Imaging</div>
+            <div class="tile-sub">Full body scan + MRI/CT for leadership</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outcome callout -->
+      <div style="margin-top:auto;position:relative;z-index:1;display:flex;gap:12px;">
+        <div style="flex:1;background:rgba(233,22,78,0.15);border:1px solid rgba(233,22,78,0.3);border-radius:10px;padding:12px 14px;text-align:center;">
+          <div style="font-size:26px;font-weight:800;color:#E9164E;line-height:1;">↓ 25%</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">Absenteeism</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;text-align:center;">
+          <div style="font-size:26px;font-weight:800;color:#FFFFFF;line-height:1;">↑ 20%</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Productivity</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Col 3: ON-SITE CAMPS — light grey ── -->
+    <div style="flex:1;background:#F8F4EF;padding:28px 36px;box-sizing:border-box;display:flex;flex-direction:column;">
+
+      <!-- Column header -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:14px;background:#013B68;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(1,59,104,0.3);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path d="M9 22V12h6v10"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;">On-Site Camps</div>
+          <div style="font-size:22px;font-weight:800;color:#013B68;line-height:1.1;">Full Battery, Zero Hassle</div>
+        </div>
+      </div>
+
+      <!-- Visual camp battery grid — 2×3 chip tiles -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Blood Tests &amp; Vitals</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/><path d="M7 10 L10 13 L14 8 L17 11"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">ECG &amp; X-Ray</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M8 8a4 4 0 0 0 8 0"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Eye &amp; Dental</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Audiometry &amp; PFT</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">Doctor Consultation</div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="14"/><line x1="15" y1="22" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:#013B68;line-height:1.3;">First Aid Training</div>
+        </div>
+      </div>
+
+      <!-- Food Handlers row -->
+      <div class="tile tile-light" style="background:#013B68;border-color:transparent;">
+        <div class="tile-icon" style="background:rgba(255,255,255,0.12);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="tile-label" style="color:#fff;">Food Handlers Testing · Form 7</div>
+          <div class="tile-sub" style="color:rgba(255,255,255,0.55);">Factory Act compliance, FSSAI-ready</div>
+        </div>
+      </div>
+
+      <!-- Full camp battery strip -->
+      <div style="margin-top:auto;background:linear-gradient(135deg,rgba(233,22,78,0.08),rgba(1,59,104,0.06));border:1px solid rgba(1,59,104,0.12);border-radius:10px;padding:12px 16px;">
+        <div style="font-size:10px;font-weight:700;color:#E9164E;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Full Camp Battery</div>
+        <div style="font-size:12px;color:rgba(1,59,104,0.65);line-height:1.6;">Blood · Vitals · X-ray · ECG · Audiometry · PFT · Dental · Eye · Dr. Consultation · Form 7</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+  </template>
+  <template id="slide-template-7">
+<style>
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #000; }
+  
+</style>
+<style>
+
+    .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.10;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:256px;}
+    .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#E9164E;border:1px solid #E9164E;border-radius:4px;padding:5px 12px;margin-bottom:20px;}
+    .ff{font-family:'Fraunces',serif;}
+    .cm{position:absolute;width:32px;height:32px;z-index:5;}
+    .cm svg{width:32px;height:32px;}
+  
+</style>
+
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;display:flex;font-family:'Poppins',sans-serif;">
+
+  <!-- LEFT — Face Vital Scan image (52% = 998px) with scan ring overlay -->
+  <div style="width:998px;height:1080px;position:relative;overflow:hidden;background:#013B68;">
+
+    <!-- The face scan image — zoomed out, fully visible, no black bars -->
+    <img src="assets/face_vital_scan.png"
+         style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+                width:78%;height:auto;max-height:85%;object-fit:contain;"
+         alt="Face Vital Scan" />
+
+    <!-- Scan ring overlay SVG — concentric rings + active arc + corner brackets -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 998 1080" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer rings -->
+      <circle cx="499" cy="460" r="360" fill="none" stroke="rgba(233,22,78,0.1)" stroke-width="1.5" stroke-dasharray="8,10"/>
+      <circle cx="499" cy="460" r="320" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="4,8"/>
+      <circle cx="499" cy="460" r="280" fill="none" stroke="rgba(233,22,78,0.15)" stroke-width="1.5" stroke-dasharray="5,6"/>
+      <circle cx="499" cy="460" r="240" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <circle cx="499" cy="460" r="200" fill="none" stroke="rgba(233,22,78,0.2)" stroke-width="1.5" stroke-dasharray="3,5"/>
+      <circle cx="499" cy="460" r="160" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+      <!-- Active scan arc (partial, crimson, suggesting active scanning) -->
+      <path d="M 499 100 A 360 360 0 0 1 859 620" fill="none" stroke="#E9164E" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+      <!-- Glowing dot at arc end -->
+      <circle cx="859" cy="620" r="8" fill="#E9164E" opacity="0.9"/>
+      <circle cx="859" cy="620" r="18" fill="rgba(233,22,78,0.25)"/>
+      <circle cx="859" cy="620" r="30" fill="rgba(233,22,78,0.08)"/>
+
+      <!-- Cross-hair lines -->
+      <line x1="80" y1="460" x2="918" y2="460" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="499" y1="80" x2="499" y2="840" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+      <!-- Corner brackets -->
+      <path d="M 110 110 L 110 160 M 110 110 L 160 110" stroke="#E9164E" stroke-width="2.5" fill="none" opacity="0.55"/>
+      <path d="M 888 110 L 888 160 M 888 110 L 838 110" stroke="#E9164E" stroke-width="2.5" fill="none" opacity="0.55"/>
+      <path d="M 110 850 L 110 800 M 110 850 L 160 850" stroke="#E9164E" stroke-width="2.5" fill="none" opacity="0.55"/>
+      <path d="M 888 850 L 888 800 M 888 850 L 838 850" stroke="#E9164E" stroke-width="2.5" fill="none" opacity="0.55"/>
+
+      <!-- Center target ring -->
+      <circle cx="499" cy="460" r="44" fill="none" stroke="rgba(233,22,78,0.35)" stroke-width="1.5"/>
+      <circle cx="499" cy="460" r="28" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+      <circle cx="499" cy="460" r="6" fill="#E9164E" opacity="0.7"/>
+
+      <!-- Parameter data point lines anchored to face regions -->
+      <!-- Heart rate — left cheek ~310,400 -->
+      <line x1="310" y1="400" x2="140" y2="340" stroke="rgba(233,22,78,0.4)" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <circle cx="310" cy="400" r="4" fill="#E9164E" opacity="0.8"/>
+
+      <!-- Blood Pressure — right forehead ~640,320 -->
+      <line x1="640" y1="320" x2="840" y2="270" stroke="rgba(233,22,78,0.3)" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <circle cx="640" cy="320" r="4" fill="#E9164E" opacity="0.6"/>
+
+      <!-- Breathing — nose bridge ~499,380 -->
+      <line x1="499" y1="380" x2="499" y2="300" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3,4"/>
+      <circle cx="499" cy="380" r="3" fill="rgba(255,255,255,0.5)"/>
+    </svg>
+
+    <!-- ANALYZING status badge — top-center -->
+    <div style="position:absolute;top:36px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.45);border:1px solid rgba(233,22,78,0.45);border-radius:999px;padding:8px 24px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(4px);">
+      <div style="width:8px;height:8px;border-radius:50%;background:#E9164E;box-shadow:0 0 8px #E9164E;"></div>
+      <span style="color:#E9164E;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">FACE VITAL SCAN · ANALYZING</span>
+    </div>
+
+    <!-- Bottom gradient overlay -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to top, rgba(1,59,104,0.9) 0%, transparent 100%);"></div>
+
+    <!-- Bottom-left text on image — removed AlinIQ/Abbott -->
+  </div>
+
+  <!-- RIGHT — Cues panel (48% = 922px) — compacted padding -->
+  <div style="width:922px;height:1080px;background:#013B68;padding:44px 52px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;">
+    <div class="grain"></div>
+    <div class="cm" style="top:24px;right:24px;transform:rotate(90deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="cm" style="bottom:24px;right:24px;transform:rotate(180deg);"><svg viewBox="0 0 32 32" fill="none"><polyline points="32,2 2,2 2,32" stroke="rgba(255,255,255,0.28)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Dot texture -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="dp7r" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="1.5" fill="white"/></pattern></defs>
+      <rect width="100%" height="100%" fill="url(#dp7r)"/>
+    </svg>
+
+    <!-- TOP BLOCK -->
+    <div style="position:relative;z-index:1;">
+      <img src="nelogo.png" style="height:64px;object-fit:contain;margin-bottom:24px;display:block;" alt="Redcliffe Labs" />
+
+      <div style="margin-bottom:16px;"><span class="pill">Face Vital Scan</span></div>
+      <div class="ff" style="font-size:44px;font-weight:800;line-height:1.05;color:#FFFFFF;">Your Face Has</div>
+      <div class="ff" style="font-size:44px;font-weight:800;line-height:1.05;color:#FFFFFF;">the Breaking News</div>
+      <div class="ff" style="font-size:44px;font-weight:800;line-height:1.05;color:#E9164E;">About Your Health.</div>
+
+      <div style="width:56px;height:3px;background:#E9164E;margin:16px 0 20px;"></div>
+
+      <!-- 7 parameter badges with mini progress bars — replacing plain numbered list -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Heart Rate</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:78%;height:100%;background:linear-gradient(to right,#22c55e,#4ade80);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#22c55e;min-width:52px;text-align:right;">72 bpm</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,193,7,0.06);border:1px solid rgba(255,193,7,0.2);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Blood Pressure</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:68%;height:100%;background:linear-gradient(to right,#FFC107,#ffd740);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#FFC107;min-width:52px;text-align:right;">126/82</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Breathing Rate</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:55%;height:100%;background:linear-gradient(to right,#22c55e,#4ade80);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#22c55e;min-width:52px;text-align:right;">16 /min</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">4</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Parasympathetic Activity</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:80%;height:100%;background:linear-gradient(to right,#22c55e,#4ade80);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#22c55e;min-width:52px;text-align:right;">Normal</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(233,22,78,0.06);border:1px solid rgba(233,22,78,0.2);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">5</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Stress Index</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:72%;height:100%;background:linear-gradient(to right,#E9164E,#f54070);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#E9164E;min-width:52px;text-align:right;">High</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">6</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Cardiac Workload</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:60%;height:100%;background:linear-gradient(to right,#22c55e,#4ade80);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#22c55e;min-width:52px;text-align:right;">Normal</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;">
+          <div style="width:30px;height:30px;flex-shrink:0;background:rgba(233,22,78,0.2);border:1px solid #E9164E;border-radius:6px;color:#E9164E;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">7</div>
+          <div style="color:#FFFFFF;font-size:17px;font-weight:600;min-width:180px;">Pulse</div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:6px;overflow:hidden;">
+            <div style="width:70%;height:100%;background:linear-gradient(to right,#22c55e,#4ade80);border-radius:3px;"></div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#22c55e;min-width:52px;text-align:right;">68 bpm</div>
+        </div>
+
+      </div>
+
+      <!-- 30s callout -->
+      <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:rgba(233,22,78,0.1);border:1px solid rgba(233,22,78,0.25);border-radius:10px;padding:14px 18px;">
+        <div style="color:#E9164E;font-size:48px;font-weight:800;line-height:1;letter-spacing:-2px;flex-shrink:0;">30s</div>
+        <div>
+          <div style="color:#FFFFFF;font-size:19px;font-weight:600;line-height:1.3;">Zero contact. Zero equipment.</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:15px;font-weight:400;line-height:1.3;">Just a smartphone camera. 7 vitals. Instant results.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM — CTA/QR zone -->
+    <div style="background:rgba(255,255,255,0.07);border-radius:12px;padding:20px 24px;display:flex;flex-direction:row;align-items:center;gap:24px;position:relative;z-index:1;">
+      <!-- QR placeholder -->
+      <div style="width:80px;height:80px;flex-shrink:0;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+          <rect x="4" y="4" width="18" height="18" rx="2" fill="white"/><rect x="8" y="8" width="10" height="10" fill="#013B68"/>
+          <rect x="30" y="4" width="18" height="18" rx="2" fill="white"/><rect x="34" y="8" width="10" height="10" fill="#013B68"/>
+          <rect x="4" y="30" width="18" height="18" rx="2" fill="white"/><rect x="8" y="34" width="10" height="10" fill="#013B68"/>
+          <rect x="30" y="30" width="6" height="6" fill="white"/>
+          <rect x="40" y="30" width="8" height="8" fill="white"/>
+          <rect x="30" y="40" width="8" height="6" fill="white"/>
+          <rect x="42" y="42" width="6" height="6" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div style="color:#FFFFFF;font-size:16px;font-weight:700;line-height:1.3;">Try it at your next health camp.</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:13px;font-weight:400;line-height:1.3;margin-top:3px;">Scan to request a demo · redcliffelabs.com/corporate</div>
+      </div>
+    </div>
+
+    <!-- Slide label bottom-right -->
+    <div style="position:absolute;bottom:24px;right:60px;font-size:13px;color:rgba(255,255,255,0.2);font-weight:400;letter-spacing:1px;z-index:1;">REDCLIFFE LABS · CHRO CONFEX 2026</div>
+
+  </div>
+
+</div>
+
+  </template>
+  <script>
+    const slides = [
+      { title: 'The Insight That Started Everything', templateId: 'slide-template-1' },
+      { title: 'Scale & Reach', templateId: 'slide-template-3' },
+      { title: 'Built Different. For a Sick India.', templateId: 'slide-template-2' },
+      { title: 'Trusted by India\'s Best', templateId: 'slide-template-4' },
+      { title: 'Your Health Program. Live in 30 Minutes.', templateId: 'slide-template-5' },
+      { title: 'Everything Your Workforce Needs. One Partner.', templateId: 'slide-template-6' },
+      { title: 'Your Face Has the Breaking News About Your Health', templateId: 'slide-template-7' },
+    ];
+
+    const state = {
+      index: 0,
+      shells: [],
+      dots: [],
+      roots: [],
+      hosts: [],
+      touchStartX: null,
+    };
+
+    const deckStage = document.getElementById('deckStage');
+    const dotNav = document.getElementById('dotNav');
+    const prevHit = document.getElementById('prevHit');
+    const nextHit = document.getElementById('nextHit');
+
+    const baseAnimationCSS = `
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      @keyframes deckFadeUp {
+        from { opacity: 0; transform: translate3d(0, 32px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes deckFadeDown {
+        from { opacity: 0; transform: translate3d(0, -24px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes deckSlideLeft {
+        from { opacity: 0; transform: translate3d(-36px, 0, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes deckSlideRight {
+        from { opacity: 0; transform: translate3d(36px, 0, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes deckScaleIn {
+        from { opacity: 0; transform: scale(0.92); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      @keyframes deckGrowX {
+        from { opacity: 0.35; transform: scaleX(0); }
+        to { opacity: 1; transform: scaleX(1); }
+      }
+      @keyframes deckSoftZoom {
+        from { opacity: 0; transform: scale(1.05); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      @keyframes deckPulseSoft {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.035); }
+      }
+      [data-deck-anim] {
+        opacity: 0;
+      }
+      [data-deck-anim="fade-up"] { transform: translate3d(0, 32px, 0); }
+      [data-deck-anim="fade-down"] { transform: translate3d(0, -24px, 0); }
+      [data-deck-anim="slide-left"] { transform: translate3d(-36px, 0, 0); }
+      [data-deck-anim="slide-right"] { transform: translate3d(36px, 0, 0); }
+      [data-deck-anim="scale-in"] { transform: scale(0.92); }
+      [data-deck-anim="grow-x"] {
+        opacity: 0.35;
+        transform: scaleX(0);
+        transform-origin: left center;
+      }
+      [data-deck-anim="soft-zoom"] { transform: scale(1.05); }
+      :host(.animating) [data-deck-anim="fade-up"] {
+        animation: deckFadeUp 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="fade-down"] {
+        animation: deckFadeDown 0.82s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="slide-left"] {
+        animation: deckSlideLeft 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="slide-right"] {
+        animation: deckSlideRight 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="scale-in"] {
+        animation: deckScaleIn 0.82s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="grow-x"] {
+        animation: deckGrowX 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="soft-zoom"] {
+        animation: deckSoftZoom 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-loop="pulse"]:not([data-deck-anim]) {
+        animation: deckPulseSoft 3.2s ease-in-out infinite;
+        animation-delay: var(--deck-delay, 0s);
+      }
+      :host(.animating) [data-deck-anim="fade-up"][data-deck-loop="pulse"] {
+        animation:
+          deckFadeUp 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 1.02s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 1.02s);
+      }
+      :host(.animating) [data-deck-anim="fade-down"][data-deck-loop="pulse"] {
+        animation:
+          deckFadeDown 0.82s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 0.96s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 0.96s);
+      }
+      :host(.animating) [data-deck-anim="slide-left"][data-deck-loop="pulse"] {
+        animation:
+          deckSlideLeft 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 1.02s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 1.02s);
+      }
+      :host(.animating) [data-deck-anim="slide-right"][data-deck-loop="pulse"] {
+        animation:
+          deckSlideRight 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 1.02s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 1.02s);
+      }
+      :host(.animating) [data-deck-anim="scale-in"][data-deck-loop="pulse"] {
+        animation:
+          deckScaleIn 0.82s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 0.96s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 0.96s);
+      }
+      :host(.animating) [data-deck-anim="grow-x"][data-deck-loop="pulse"] {
+        animation:
+          deckGrowX 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 1.06s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 1.06s);
+      }
+      :host(.animating) [data-deck-anim="soft-zoom"][data-deck-loop="pulse"] {
+        animation:
+          deckSoftZoom 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+          deckPulseSoft 3.2s ease-in-out calc(var(--deck-delay, 0s) + 1.24s) infinite;
+        animation-delay: var(--deck-delay, 0s), calc(var(--deck-delay, 0s) + 1.24s);
+      }
+    `;
+
+    function fitStage() {
+      const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      document.documentElement.style.setProperty('--deck-scale', String(Math.max(scale, 0.1)));
+    }
+
+    function positionFor(current, target) {
+      const delta = target - current;
+      if (delta === 0) return 'active';
+      if (delta === -1) return 'before';
+      if (delta === 1) return 'after';
+      return delta < 0 ? 'far-before' : 'far-after';
+    }
+
+    function byText(root, selector, text) {
+      return Array.from(root.querySelectorAll(selector)).find((el) => (el.textContent || '').includes(text)) || null;
+    }
+
+    function mark(el, anim, delay) {
+      if (!el) return;
+      el.setAttribute('data-deck-anim', anim);
+      el.style.setProperty('--deck-delay', `${delay}s`);
+    }
+
+    function pulse(el, delay = 0) {
+      if (!el) return;
+      el.setAttribute('data-deck-loop', 'pulse');
+      el.style.setProperty('--deck-delay', `${delay}s`);
+    }
+
+    function stagger(elements, anim, start, step) {
+      elements.filter(Boolean).forEach((el, idx) => mark(el, anim, start + idx * step));
+    }
+
+    function resetHost(host) {
+      host.classList.remove('animating');
+    }
+
+    function playHost(host) {
+      host.classList.remove('animating');
+      void host.offsetWidth;
+      host.classList.add('animating');
+    }
+
+    function enhanceSlide1(root) {
+      const logos = Array.from(root.querySelectorAll('img[alt="Redcliffe Labs"]'));
+      const labImage = logos[1] || null;
+      const profileName = byText(root, 'div', 'Abhay Singavi');
+      const profileBlock = profileName ? profileName.closest('div[style*="display:flex"]') || profileName.parentElement : null;
+      const headline = Array.from(root.querySelectorAll('.ff')).slice(0, 2);
+      const pill = root.querySelector('.pill')?.closest('div');
+      const rule = Array.from(root.querySelectorAll('div')).find((el) => el.style.width === '72px' && el.style.height === '4px');
+      const timeline = Array.from(root.querySelectorAll('div')).find((el) => el.style.maxWidth === '1100px');
+      const steps = timeline ? Array.from(timeline.children).filter((el) => el.style.flex === '1') : [];
+      const pyramid = root.querySelector('svg[width="500"][height="300"]');
+      const annotationWrap = pyramid?.parentElement?.lastElementChild;
+      const callouts = annotationWrap ? Array.from(annotationWrap.children) : [];
+      const footer = byText(root, 'div', '19 years. One clear thesis');
+
+      mark(pill, 'fade-up', 0.04);
+      stagger(headline, 'slide-left', 0.12, 0.09);
+      mark(rule, 'grow-x', 0.28);
+      mark(labImage, 'soft-zoom', 0.18);
+      mark(profileBlock, 'fade-up', 0.58);
+      stagger(steps, 'fade-up', 0.34, 0.08);
+      mark(pyramid, 'scale-in', 0.62);
+      stagger(callouts, 'slide-right', 0.72, 0.08);
+      mark(footer, 'fade-up', 0.95);
+      pulse(labImage, 1.6);
+    }
+
+    function enhanceSlide2(root) {
+      const top = root.firstElementChild;
+      const panels = Array.from(top.children).filter((el) => el.tagName === 'DIV' && el.style.width);
+      const left = panels[0];
+      const right = panels[1];
+      const leftHeadline = byText(root, 'div', "India's Workforce Is Running On Empty.");
+      const leftRule = Array.from(left.querySelectorAll('div')).find((el) => el.style.height === '2px' && el.style.width === '100%');
+      const rowCards = [
+        byText(root, 'div', 'Uncontrolled Hypertension')?.parentElement?.parentElement,
+        byText(root, 'div', 'Vitamin D Deficiency')?.parentElement?.parentElement,
+        byText(root, 'div', 'Abnormal Lipid Parameter')?.parentElement?.parentElement,
+        byText(root, 'div', 'Annual Absenteeism Cost')?.parentElement?.parentElement,
+      ];
+      const barFills = Array.from(left.querySelectorAll('div[style*="height:40px"] > div:first-child'));
+      const quoteCard = byText(root, 'div', 'more hypertensives than any nation on earth')?.closest('div[style*="border-radius:12px"]');
+      const rightPill = right.querySelector('.pill')?.closest('div');
+      const rightTitles = Array.from(right.querySelectorAll('.ff')).slice(0, 2);
+      const rightRule = Array.from(right.querySelectorAll('div')).find((el) => el.style.width === '80px' && el.style.height === '4px');
+      const cueRows = [
+        byText(root, 'div', 'Home Collection')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', 'Quality at Scale')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', 'Tier 2')?.closest('div[style*="display:flex"]'),
+      ];
+      const outcomes = [
+        byText(root, 'div', 'Absenteeism')?.closest('div[style*="border-radius:12px"]'),
+        byText(root, 'div', 'Productivity')?.closest('div[style*="border-radius:12px"]'),
+      ];
+      const logo = Array.from(root.querySelectorAll('img[alt="Redcliffe Labs"]')).pop();
+
+      mark(leftHeadline, 'fade-up', 0.06);
+      mark(leftRule, 'grow-x', 0.16);
+      stagger(rowCards, 'fade-up', 0.22, 0.09);
+      stagger(barFills, 'grow-x', 0.34, 0.08);
+      mark(quoteCard, 'fade-up', 0.68);
+      mark(rightPill, 'fade-up', 0.08);
+      stagger(rightTitles, 'slide-right', 0.16, 0.08);
+      mark(rightRule, 'grow-x', 0.32);
+      stagger(cueRows, 'slide-right', 0.42, 0.1);
+      stagger(outcomes, 'scale-in', 0.8, 0.1);
+      mark(logo, 'fade-down', 0.02);
+      pulse(outcomes[1], 2.4);
+    }
+
+    function enhanceSlide3(root) {
+      const leftPanel = Array.from(root.querySelectorAll('div')).find((el) => el.style.width === '560px' && el.style.height === '1080px');
+      const logo = root.querySelector('img[alt="Redcliffe Labs"]');
+      const pill = leftPanel?.querySelector('.pill')?.closest('div');
+      const titles = Array.from(leftPanel?.querySelectorAll('.ff') || []).slice(0, 3);
+      const rule = Array.from(leftPanel?.querySelectorAll('div') || []).find((el) => el.style.width === '56px' && el.style.height === '3px');
+      const bodyText = byText(root, 'div', 'The only diagnostics company');
+      const statCards = [
+        byText(root, 'div', 'Corporate Clients')?.closest('div[style*="border-radius:12px"]'),
+        byText(root, 'div', 'Tests in 2025')?.closest('div[style*="border-radius:12px"]'),
+        byText(root, 'div', 'Savings for Families')?.closest('div[style*="border-radius:12px"]'),
+        byText(root, 'div', 'Health Camps monthly')?.closest('div[style*="border-radius:12px"]'),
+      ];
+      const footer = byText(root, 'div', '80+ Labs');
+      const mapImage = root.querySelector('img[alt="Redcliffe Labs Network Map"]');
+
+      mark(logo, 'fade-down', 0.02);
+      mark(pill, 'fade-up', 0.08);
+      stagger(titles, 'slide-left', 0.16, 0.08);
+      mark(rule, 'grow-x', 0.36);
+      mark(bodyText, 'fade-up', 0.44);
+      stagger(statCards, 'fade-up', 0.54, 0.1);
+      mark(footer, 'fade-up', 0.96);
+      mark(mapImage, 'soft-zoom', 0.2);
+      pulse(mapImage, 2.2);
+    }
+
+    function enhanceSlide4(root) {
+      const logoWall = root.querySelector('img[alt="Client Logos"]');
+      const leftLabel = byText(root, 'div', '700+ Companies Trust Us');
+      const logo = Array.from(root.querySelectorAll('img[alt="Redcliffe Labs"]')).pop();
+      const pill = root.querySelector('.pill')?.closest('div');
+      const titles = Array.from(root.querySelectorAll('.ff')).slice(0, 2);
+      const subtitle = byText(root, 'div', 'Up and running in 30 minutes');
+      const rule = Array.from(root.querySelectorAll('div')).find((el) => el.style.width === '80px' && el.style.height === '3px');
+      const cards = [
+        byText(root, 'div', 'Assign Account Manager')?.closest('div[style*="border-left:4px"]'),
+        byText(root, 'div', 'Build Your Package')?.closest('div[style*="border-left:4px"]'),
+        byText(root, 'div', 'Portal Goes Live')?.closest('div[style*="border-left:4px"]'),
+        byText(root, 'div', 'Track & Act')?.closest('div[style*="border-left:4px"]'),
+      ];
+      const outcomes = [
+        byText(root, 'div', 'Absenteeism')?.closest('div[style*="border-radius:10px"]'),
+        byText(root, 'div', 'Productivity')?.closest('div[style*="border-radius:10px"]'),
+        byText(root, 'div', 'NPS Score')?.closest('div[style*="border-radius:10px"]'),
+      ];
+
+      mark(leftLabel, 'fade-up', 0.06);
+      mark(logoWall, 'soft-zoom', 0.16);
+      mark(logo, 'fade-down', 0.02);
+      mark(pill, 'fade-up', 0.08);
+      stagger(titles, 'slide-right', 0.16, 0.08);
+      mark(subtitle, 'fade-up', 0.32);
+      mark(rule, 'grow-x', 0.4);
+      stagger(cards, 'slide-right', 0.48, 0.1);
+      stagger(outcomes, 'scale-in', 0.96, 0.08);
+      pulse(logoWall, 2.4);
+    }
+
+    function enhanceSlide5(root) {
+      const logo = root.querySelector('img[alt="Redcliffe Labs"]');
+      const pill = root.querySelector('.pill')?.closest('div');
+      const titles = Array.from(root.querySelectorAll('.ff')).slice(0, 2);
+      const rule = Array.from(root.querySelectorAll('div')).find((el) => el.style.width === '60px' && el.style.height === '3px');
+      const bullets = [
+        byText(root, 'div', 'White-labelled portal')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', 'API or iFrame embed')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', '30 minutes" to go live')?.closest('div[style*="display:flex"]') || byText(root, 'div', '30 minutes')?.closest('div[style*="display:flex"]'),
+      ];
+      const mockup = byText(root, 'span', 'Embedded Wellness Portal')?.closest('div[style*="margin-bottom:10px"]')?.nextElementSibling;
+      const kpiCards = [
+        byText(root, 'div', 'On-Time Reports')?.closest('div[style*="border-radius:10px"]'),
+        byText(root, 'div', 'Enrolled')?.closest('div[style*="border-radius:10px"]'),
+        byText(root, 'div', 'At Risk')?.closest('div[style*="border-radius:10px"]'),
+        byText(root, 'div', 'NPS Score')?.closest('div[style*="border-radius:10px"]'),
+      ];
+      const chartBars = Array.from(root.querySelectorAll('div[style*="height:6px;width:"]'));
+      const alerts = byText(root, 'div', 'Health Alerts')?.closest('div[style*="border-radius:8px"]');
+      const photo = root.querySelector('img[src*="home_collection_camp.png"]');
+      const leftPhotoText = byText(root, 'div', 'At Your Door, Not Your Doctor')?.parentElement;
+      const rightPhotoText = byText(root, 'div', 'Your Campus, Our Full Setup')?.parentElement;
+      const dashboard = byText(root, 'div', 'Wellness Dashboard')?.parentElement;
+      const footer = byText(root, 'span', 'New Labour Codes mandate annual health checkups')?.closest('div[style*="height:52px"]');
+
+      mark(logo, 'fade-down', 0.02);
+      mark(pill, 'fade-up', 0.08);
+      stagger(titles, 'slide-left', 0.16, 0.08);
+      mark(rule, 'grow-x', 0.32);
+      stagger(bullets, 'slide-left', 0.42, 0.1);
+      mark(mockup, 'scale-in', 0.28);
+      stagger(kpiCards, 'fade-up', 0.6, 0.08);
+      stagger(chartBars, 'grow-x', 0.8, 0.04);
+      mark(alerts, 'fade-up', 0.96);
+      mark(photo, 'soft-zoom', 0.38);
+      mark(leftPhotoText, 'fade-up', 0.88);
+      mark(rightPhotoText, 'fade-up', 0.98);
+      mark(dashboard, 'slide-right', 0.9);
+      mark(footer, 'grow-x', 1.08);
+      pulse(mockup, 2.2);
+    }
+
+    function enhanceSlide6(root) {
+      const pill = root.querySelector('.pill')?.closest('div');
+      const titles = Array.from(root.querySelectorAll('.ff')).slice(0, 2);
+      const journeyStrip = byText(root, 'div', 'JOINING')?.closest('div[style*="border-radius:40px"]');
+      const badge = byText(root, 'div', 'Camps monthly')?.closest('div[style*="border-radius:10px"]');
+      const logo = root.querySelector('img[alt="Redcliffe Labs"]');
+      const headers = [
+        byText(root, 'div', 'Pre-Employment')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', 'Year-Round Care')?.closest('div[style*="display:flex"]'),
+        byText(root, 'div', 'Full Battery, Zero Hassle')?.closest('div[style*="display:flex"]'),
+      ];
+      const tiles = Array.from(root.querySelectorAll('.tile'));
+      const gridCards = Array.from(root.querySelectorAll('div[style*="display:grid"] > div'));
+      const strip = byText(root, 'div', 'Full Camp Battery')?.parentElement;
+
+      mark(pill, 'fade-up', 0.06);
+      stagger(titles, 'slide-left', 0.14, 0.08);
+      mark(journeyStrip, 'fade-down', 0.18);
+      mark(badge, 'scale-in', 0.24);
+      mark(logo, 'fade-down', 0.04);
+      stagger(headers, 'fade-up', 0.34, 0.12);
+      stagger(tiles.slice(0, 15), 'fade-up', 0.46, 0.05);
+      stagger(gridCards, 'scale-in', 0.82, 0.05);
+      mark(strip, 'fade-up', 1.08);
+      pulse(badge, 2.1);
+    }
+
+    function enhanceSlide7(root) {
+      const face = root.querySelector('img[alt="Face Vital Scan"]');
+      const analyzing = byText(root, 'span', 'FACE VITAL SCAN')?.closest('div[style*="border-radius:999px"]');
+      const logo = root.querySelector('img[alt="Redcliffe Labs"]');
+      const pill = root.querySelector('.pill')?.closest('div');
+      const titles = Array.from(root.querySelectorAll('.ff')).slice(0, 3);
+      const rule = Array.from(root.querySelectorAll('div')).find((el) => el.style.width === '56px' && el.style.height === '3px');
+      const metricCards = Array.from(root.querySelectorAll('div[style*="border-radius:10px;padding:10px 14px"]')).slice(0, 7);
+      const metricBars = Array.from(root.querySelectorAll('div[style*="height:6px;overflow:hidden"] > div'));
+      const callout30 = byText(root, 'div', 'Zero contact. Zero equipment.')?.closest('div[style*="border-radius:10px"]');
+      const cta = byText(root, 'div', 'Try it at your next health camp.')?.closest('div[style*="border-radius:12px"]');
+
+      mark(face, 'soft-zoom', 0.14);
+      mark(analyzing, 'fade-down', 0.18);
+      mark(logo, 'fade-down', 0.04);
+      mark(pill, 'fade-up', 0.1);
+      stagger(titles, 'slide-right', 0.18, 0.08);
+      mark(rule, 'grow-x', 0.42);
+      stagger(metricCards, 'slide-right', 0.52, 0.07);
+      stagger(metricBars, 'grow-x', 0.62, 0.05);
+      mark(callout30, 'scale-in', 1.02);
+      mark(cta, 'fade-up', 1.1);
+      pulse(face, 2.3);
+      pulse(callout30, 2.8);
+    }
+
+    function enhanceSlide(index, root) {
+      if (index === 0) enhanceSlide1(root);
+      if (index === 1) enhanceSlide3(root);
+      if (index === 2) enhanceSlide2(root);
+      if (index === 3) enhanceSlide4(root);
+      if (index === 4) enhanceSlide5(root);
+      if (index === 5) enhanceSlide6(root);
+      if (index === 6) enhanceSlide7(root);
+    }
+
+    function buildDeck() {
+      slides.forEach((slide, index) => {
+        const shell = document.createElement('section');
+        shell.className = 'slide-shell';
+        shell.dataset.state = index === 0 ? 'active' : 'far-after';
+
+        const host = document.createElement('div');
+        host.className = 'slide-host';
+        const shadow = host.attachShadow({ mode: 'open' });
+        const animStyle = document.createElement('style');
+        animStyle.textContent = baseAnimationCSS;
+        shadow.appendChild(animStyle);
+        shadow.appendChild(document.getElementById(slide.templateId).content.cloneNode(true));
+        enhanceSlide(index, shadow);
+
+        shell.appendChild(host);
+        deckStage.insertBefore(shell, prevHit);
+        state.shells.push(shell);
+        state.roots.push(shadow);
+        state.hosts.push(host);
+
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        dot.addEventListener('click', () => goTo(index));
+        dotNav.appendChild(dot);
+        state.dots.push(dot);
+      });
+    }
+
+    function updateHash(index) {
+      const hash = `slide-${index + 1}`;
+      if (location.hash !== `#${hash}`) {
+        history.replaceState(null, '', `#${hash}`);
+      }
+    }
+
+    function goTo(index) {
+      const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
+      state.index = nextIndex;
+
+      state.shells.forEach((shell, shellIndex) => {
+        shell.dataset.state = positionFor(nextIndex, shellIndex);
+      });
+
+      state.dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('active', dotIndex === nextIndex);
+      });
+
+      state.hosts.forEach((host, hostIndex) => {
+        if (hostIndex === nextIndex) playHost(host);
+        else resetHost(host);
+      });
+
+      updateHash(nextIndex);
+    }
+
+    function next() {
+      if (state.index < slides.length - 1) goTo(state.index + 1);
+    }
+
+    function prev() {
+      if (state.index > 0) goTo(state.index - 1);
+    }
+
+    function hashIndex() {
+      const match = location.hash.match(/slide-(\d+)/i);
+      if (!match) return 0;
+      const parsed = Number(match[1]) - 1;
+      if (!Number.isFinite(parsed)) return 0;
+      return Math.max(0, Math.min(parsed, slides.length - 1));
+    }
+
+    function handleKeydown(event) {
+      const key = event.key;
+      if (key === ' ' || key === 'Spacebar' || key === 'ArrowRight' || key === 'PageDown') {
+        event.preventDefault();
+        next();
+        return;
+      }
+      if (key === 'ArrowLeft' || key === 'PageUp' || key === 'Backspace') {
+        event.preventDefault();
+        prev();
+        return;
+      }
+      if (key === 'Home') {
+        event.preventDefault();
+        goTo(0);
+        return;
+      }
+      if (key === 'End') {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    }
+
+    prevHit.addEventListener('click', prev);
+    nextHit.addEventListener('click', next);
+    document.addEventListener('keydown', handleKeydown);
+    window.addEventListener('resize', fitStage);
+    window.addEventListener('hashchange', () => goTo(hashIndex()));
+
+    document.addEventListener('touchstart', (event) => {
+      state.touchStartX = event.changedTouches[0]?.clientX ?? null;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (event) => {
+      const endX = event.changedTouches[0]?.clientX;
+      if (state.touchStartX == null || endX == null) return;
+      const delta = endX - state.touchStartX;
+      if (Math.abs(delta) > 48) {
+        if (delta < 0) next();
+        else prev();
+      }
+      state.touchStartX = null;
+    }, { passive: true });
+
+    buildDeck();
+    fitStage();
+    goTo(hashIndex());
+  </script>
+</body>
+</html>
