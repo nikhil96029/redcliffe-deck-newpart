@@ -1365,91 +1365,67 @@
         </div>
       </div>
 
-      <!-- Visual camp battery grid — 2×6 chip tiles -->
+      <!-- Visual camp battery grid — 2×6 uniform tiles matching col 1 & 2 style -->
       <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(6,1fr);gap:8px;flex:1;">
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Blood Tests</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg></div>
+          <div><div class="tile-label">Blood Tests</div><div class="tile-sub">CBC, LFT, KFT &amp; more</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Vitals — BP, BMI, SpO2</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div><div class="tile-label">Vitals — BP, BMI, SpO2</div><div class="tile-sub">On-site measurement</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 6 9 9 15 12 6 15 12 18 9 21 12"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">ECG</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 6 9 9 15 12 6 15 12 18 9 21 12"/></svg></div>
+          <div><div class="tile-label">ECG</div><div class="tile-sub">12-lead cardiac screening</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">X-Ray</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg></div>
+          <div><div class="tile-label">X-Ray</div><div class="tile-sub">Digital, NABL-certified</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Audiometry</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+          <div><div class="tile-label">Audiometry</div><div class="tile-sub">Occupational hearing test</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Spirometry (PFT)</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <div><div class="tile-label">Spirometry (PFT)</div><div class="tile-sub">Lung function testing</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Eye Screening</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg></div>
+          <div><div class="tile-label">Eye Screening</div><div class="tile-sub">Visual acuity &amp; pressure</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Dental Screening</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <div><div class="tile-label">Dental Screening</div><div class="tile-sub">Oral health assessment</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Mental Wellness</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div><div class="tile-label">Mental Wellness</div><div class="tile-sub">Stress &amp; anxiety check</div></div>
         </div>
 
-        <div style="background:#FFFFFF;border:1px solid rgba(1,59,104,0.1);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(233,22,78,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#013B68;line-height:1.3;">Dr. Consultation</div>
+        <div class="tile tile-light" style="margin:0;height:100%;box-sizing:border-box;">
+          <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9164E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div><div class="tile-label">Dr. Consultation</div><div class="tile-sub">On-site physician</div></div>
         </div>
 
-        <div style="background:#013B68;border:1px solid transparent;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#FFFFFF;line-height:1.3;">Factories Compliance — Form 7</div>
+        <div class="tile" style="margin:0;height:100%;box-sizing:border-box;background:#013B68;border:none;">
+          <div class="tile-icon" style="background:rgba(255,255,255,0.15);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg></div>
+          <div><div class="tile-label" style="color:#fff;">Factories Compliance</div><div class="tile-sub" style="color:rgba(255,255,255,0.55);">Form 7, Factory Act</div></div>
         </div>
 
-        <div style="background:#E9164E;border:1px solid transparent;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;height:100%;box-sizing:border-box;">
-          <div style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="14"/><line x1="15" y1="22" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#FFFFFF;line-height:1.3;">First Aid Trainings</div>
+        <div class="tile" style="margin:0;height:100%;box-sizing:border-box;background:#E9164E;border:none;">
+          <div class="tile-icon" style="background:rgba(255,255,255,0.2);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="14"/><line x1="15" y1="22" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg></div>
+          <div><div class="tile-label" style="color:#fff;">First Aid Trainings</div><div class="tile-sub" style="color:rgba(255,255,255,0.75);">CPR &amp; emergency response</div></div>
         </div>
 
       </div>
