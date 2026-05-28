@@ -322,11 +322,12 @@
   <!-- Logo top right -->
   <img src="nelogo.png" style="position:absolute;top:72px;right:150px;height:76px;object-fit:contain;z-index:4;" alt="Redcliffe Labs" />
 
-  <!-- Career timeline with logos -->
-  <div style="position:absolute;top:270px;left:80px;width:1020px;z-index:2;">
-    <div class="timeline-line1" style="position:absolute;top:104px;left:14px;right:14px;height:1px;background:rgba(255,255,255,0.22);z-index:0;"></div>
-    <div style="display:flex;flex-direction:row;align-items:flex-start;gap:18px;position:relative;">
+  <!-- Career timeline with logos — extends into white panel so step 5 lands on white -->
+  <div style="position:absolute;top:270px;left:80px;width:1340px;z-index:4;">
+    <div class="timeline-line1" style="position:absolute;top:104px;left:14px;width:960px;height:1px;background:linear-gradient(to right,rgba(255,255,255,0.22) 0%,rgba(255,255,255,0.22) 74%,rgba(1,59,104,0.2) 82%,rgba(1,59,104,0.2) 100%);z-index:0;"></div>
+    <div style="display:flex;flex-direction:row;align-items:flex-start;gap:0;position:relative;">
 
+      <!-- Steps 1-4 on navy background -->
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
         <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
           <div class="logo-halo" style="--halo-delay:0.46s;"></div>
@@ -334,7 +335,7 @@
         </div>
         <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">01</span></div>
         <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Narayana Health</div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Made healthcare affordable to the bottom of the pyramid</div></div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;max-width:190px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Made healthcare affordable to the bottom of the pyramid</div></div>
       </div>
 
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
@@ -344,7 +345,7 @@
         </div>
         <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">02</span></div>
         <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Medanta</div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Built upmarket, high-accuracy care at scale</div></div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;max-width:190px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Built upmarket, high-accuracy care at scale</div></div>
       </div>
 
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
@@ -354,7 +355,7 @@
         </div>
         <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">03</span></div>
         <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">PolicyBazaar</div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Sold insurance to diagnostics buyers &mdash; saw the demand signal first</div></div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;max-width:190px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Sold insurance to diagnostics buyers &mdash; saw the demand signal first</div></div>
       </div>
 
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
@@ -364,13 +365,14 @@
         </div>
         <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">04</span></div>
         <div style="color:#FFFFFF;font-size:15px;font-weight:700;margin-top:8px;">Healthians</div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Proved home collection works &mdash; built the model first</div></div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;margin-top:7px;max-width:190px;"><div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.35;">Proved home collection works &mdash; built the model first</div></div>
       </div>
 
+      <!-- Step 5 lands on WHITE panel — no filter, colored logo -->
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
         <div style="height:72px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative;">
           <div class="logo-halo" style="--halo-delay:0.82s;"></div>
-          <img src="nelogo.png" style="max-height:44px;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.95;" alt="Redcliffe Labs" />
+          <img src="https://docemm19.github.io/redcliffe-govt-deck/assets/logos/redcliffe_labs.png" style="max-height:44px;max-width:160px;object-fit:contain;opacity:0.95;" alt="Redcliffe Labs" />
         </div>
         <div style="width:28px;height:28px;border-radius:50%;background:#E9164E;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(233,22,78,0.5);"><span style="color:#FFFFFF;font-size:10px;font-weight:700;">05</span></div>
         <div style="color:#E9164E;font-size:15px;font-weight:800;margin-top:8px;">Redcliffe Labs</div>
@@ -378,8 +380,8 @@
     </div>
   </div>
 
-  <!-- Bridge line -->
-  <div style="position:absolute;top:373px;left:1096px;width:70px;height:0;border-top:2.5px dashed rgba(233,22,78,0.75);z-index:2;"></div>
+  <!-- Bridge line connecting step 5 to 2021 dot -->
+  <div style="position:absolute;top:373px;left:1310px;width:120px;height:0;border-top:2.5px dashed rgba(233,22,78,0.75);z-index:5;"></div>
 
   <!-- FUNNEL CHART replaces hero image -->
   <div style="position:absolute;top:490px;left:80px;width:1020px;height:430px;z-index:2;display:flex;flex-direction:row;align-items:center;gap:48px;">
