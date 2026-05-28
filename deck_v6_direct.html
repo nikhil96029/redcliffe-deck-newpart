@@ -713,7 +713,7 @@
     <div style="font-size:13px;font-weight:700;color:#E9164E;text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;position:relative;z-index:1;text-align:center;">700+ Companies Trust Us</div>
 
     <!-- Client logo image -->
-    <img src="assets/client_logos.png" style="max-width:780px;max-height:640px;object-fit:contain;position:relative;z-index:1;" alt="Client Logos" />
+    <img src="company_logos.png" style="max-width:780px;max-height:640px;object-fit:contain;position:relative;z-index:1;" alt="Client Logos" />
 
     <!-- Bottom accent line -->
     <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(to right,transparent,#E9164E,transparent);"></div>
@@ -1459,9 +1459,11 @@
   <div style="width:998px;height:1080px;position:relative;overflow:hidden;background:#013B68;">
 
     <!-- The face scan image — zoomed out, fully visible, no black bars -->
-    <img src="assets/face_vital_scan.png"
-         style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78%;height:auto;max-height:85%;object-fit:contain;"
-         alt="Face Vital Scan" />
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78%;max-height:85%;overflow:hidden;">
+      <img src="assets/face_vital_scan.png"
+           style="width:100%;height:auto;object-fit:contain;display:block;"
+           alt="Face Vital Scan" />
+    </div>
 
     <!-- Scan ring overlay SVG — concentric rings + active arc + corner brackets -->
     <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 998 1080" xmlns="http://www.w3.org/2000/svg">
